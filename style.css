@@ -49,6 +49,13 @@ body {
   align-items: center;
   pointer-events: none;
   z-index: 10;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.overlay.scrolled {
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 2rem 3rem;
 }
 
 .title {
@@ -66,6 +73,14 @@ body {
   animation: colorFlow 3s linear infinite;
   filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5))
           drop-shadow(0 0 40px rgba(102, 0, 255, 0.3));
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.overlay.scrolled .title {
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  letter-spacing: 0.2em;
+  margin-bottom: 0.5rem;
+  text-align: left;
 }
 
 @keyframes colorFlow {
@@ -82,6 +97,12 @@ body {
   justify-content: center;
   align-items: center;
   max-width: 90%;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.overlay.scrolled .subtitle-container {
+  max-width: 100%;
+  justify-content: flex-start;
 }
 
 .subtitle {
@@ -94,6 +115,16 @@ body {
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   white-space: pre-line;
   display: inline-block;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.overlay.scrolled .subtitle {
+  font-size: clamp(0.6rem, 1vw, 0.8rem);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 500px;
 }
 
 .subtitle::after {
@@ -101,6 +132,10 @@ body {
   color: #00d4ff;
   animation: blink 0.75s step-end infinite;
   margin-left: 2px;
+}
+
+.overlay.scrolled .subtitle::after {
+  display: none;
 }
 
 @keyframes blink {
@@ -263,6 +298,65 @@ body {
   width: 1.5rem;
 }
 
+/* AI Bot Button */
+.ai-bot-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: rgba(0, 212, 255, 0.1);
+  border: 2px solid #00d4ff;
+  border-radius: 50px;
+  color: #00d4ff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3),
+              0 0 40px rgba(0, 212, 255, 0.1),
+              inset 0 0 20px rgba(0, 212, 255, 0.05);
+}
+
+.ai-bot-btn svg {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.5));
+}
+
+.ai-bot-btn:hover {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: #ff00ff;
+  color: #ff00ff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 30px rgba(255, 0, 255, 0.5),
+              0 0 60px rgba(255, 0, 255, 0.3),
+              0 0 90px rgba(0, 212, 255, 0.2),
+              inset 0 0 30px rgba(255, 0, 255, 0.1);
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+}
+
+.ai-bot-btn:hover svg {
+  filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.8));
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
 @media (max-width: 768px) {
   .title {
     letter-spacing: 0.2em;
@@ -306,5 +400,17 @@ body {
 
   .hero-nav-item {
     font-size: 1.5rem;
+  }
+
+  .ai-bot-btn {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .ai-bot-btn svg {
+    width: 20px;
+    height: 20px;
   }
 }
