@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Enhanced Space-Themed IDE Login</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+  /* Starry animated background */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(ellipse at center, #0a0d24 0%, #000010 90%);
+    overflow: hidden;
+    color: #e0f7fa;
+  }
+
+  .starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(white 1px, transparent 1px) 0 0,
+                radial-gradient(white 1px, transparent 1px) 25px 25px;
+    background-size: 50px 50px;
+    animation: drift 60s linear infinite;
+    opacity: 0.15;
+    z-index: 0;
+  }
+
+  @keyframes drift {
+    0% { background-position: 0 0, 25px 25px; }
+    100% { background-position: 50px 50px, 75px 75px; }
+  }
+
+  /* Center container */
+  .login-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 360px;
+    margin: 8% auto;
+    background-color: rgba(5, 10, 20, 0.85);
+    border-radius: 14px;
+    padding: 30px 25px;
+    box-shadow: 0 0 25px #6de4f7;
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 30px;
+    color: #6de4f7;
+    font-size: 2.4rem;
+  }
+
+  /* Input Fields */
+  input[type=text], input[type=password] {
+    width: 100%;
+    padding: 14px 20px;
+    margin: 12px 0;
+    border-radius: 12px;
+    border: 2px solid #2e4f6e;
+    background: transparent;
+    color: #cdf4f9;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  input[type=text]::placeholder, input[type=password]::placeholder {
+    color: #5588aa;
+    font-style: italic;
+  }
+
+  input[type=text]:focus, input[type=password]:focus {
+    border-color: #6de4f7;
+    box-shadow: 0 0 12px #6de4f7;
+  }
+
+  /* Button with rocket icon */
+  button {
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 22px;
+    border-radius: 25px;
+    border: none;
+    background-color: #338dbb;
+    color: #e0f7fa;
+    font-size: 1.3rem;
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 0 18px #33b1ff;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #1a6fb3;
+    box-shadow: 0 0 28px #66d0ff, inset 0 0 10px #66d0ff;
+  }
+
+  /* Rocket icon styling */
+  .rocket-icon {
+    width: 22px;
+    filter: drop-shadow(0 0 3px #66d0ff);
+    transition: transform 0.3s ease;
+  }
+
+  button:hover .rocket-icon {
+    transform: translateY(-4px);
+  }
+
+  /* Decorative icons near inputs */
+  .input-group {
+    position: relative;
+  }
+
+  .input-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    width: 20px;
+    opacity: 0.5;
+    filter: drop-shadow(0 0 1px #66d0ff);
+    pointer-events: none;
+  }
+
+  /* Place padding-left on inputs to avoid overlap */
+  .input-with-icon {
+    padding-left: 45px;
+  }
+
+  /* Success message & rocket animation */
+  .success-message {
+    color: #6de4f7;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    display: none;
+  }
+
+  .rocket-launch {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: rocketLift 2s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes rocketLift {
+    0% { opacity: 1; bottom: 40px; transform: translateX(-50%) rotate(0deg);}
+    100% { opacity: 0; bottom: 500px; transform: translateX(-50%) rotate(45deg);}
+  }
+</style>
+</head>
+<body>
+  <div class="starfield" aria-hidden="true"></div>
+
+  <main class="login-wrapper" role="main" aria-label="Space themed login form">
+    <h1>Space IDE Login</h1>
+    <form id="loginForm">
+      <div class="input-group">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="User icon" class="input-icon" />
+        <input class="input-with-icon" type="text" id="username" name="username" placeholder="Enter your star code" required aria-required="true" autocomplete="username" />
+      </div>
+      <div class="input-group">
+        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="Password icon" class="input-icon" />
+        <input class="input-with-icon" type="password" id="password" name="password" placeholder="Password" required aria-required="true" autocomplete="current-password"/>
+      </div>
+      <button type="submit" aria-label="Launch your IDE">
+        <img src="https://cdn-icons-png.flaticon.com/512/395/395204.png" alt="" class="rocket-icon" /> Launch
+      </button>
+    </form>
+    <div class="success-message" id="successMsg" role="alert" aria-live="polite">Liftoff! Welcome aboard, Captain.</div>
+  </main>
+
+  <!-- Rocket launch animation image -->
+  <img src="https://cdn-icons-png.flaticon.com/512/395/395204.png" alt="Rocket launch animation" id="rocketLaunch" class="rocket-launch" aria-hidden="true"/>
+
+<script>
+  const form = document.getElementById('loginForm');
+  const successMsg = document.getElementById('successMsg');
+  const rocket = document.getElementById('rocketLaunch');
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (form.username.value && form.password.value) {
+      successMsg.style.display = 'block';
+      rocket.style.opacity = '1';
+      rocket.style.animation = 'rocketLift 2s ease forwards';
+
+      setTimeout(() => {
+        successMsg.style.display = 'none';
+        rocket.style.opacity = '0';
+        rocket.style.animation = 'none';
+        form.reset();
+      }, 3000);
+    }
+  });
+</script>
+</body>
+</html>

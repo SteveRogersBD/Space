@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <title>Exploration — Meteorite Types</title>
+    <link rel="icon" href="images/logo.png">
+    <style>
+        @font-face {
+            font-family: prompt;
+            src: url(fonts/Prompt-Light.ttf);
+        }
+
+        @font-face {
+            font-family: sansserifbook;
+            src: url(fonts/SansSerifBookFLF.otf);
+        }
+
+        * {
+            font-family: sansserifbook;
+            color: white;
+        }
+
+        /* make hero fill viewport and be responsive */
+        main {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.95)), url("images/satellite-gcf2e82a22_1920.jpg");
+            min-height: 60vh;
+            background-position: center;
+            background-size: cover;
+            padding: 3rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+                /* Sticky header + glassmorphism nav */
+                header.site-header{ position: sticky; top: 0; z-index: 1000; padding: 0; margin: 0 0 1rem 0; background: transparent; }
+                .glass-nav{
+                    display:flex; align-items:center; gap:.75rem; width:100%;
+                    max-width: 1200px; margin: .75rem auto 0 auto; padding: .6rem .9rem;
+                    background: rgba(255,255,255,0.06);
+                    border: 1px solid rgba(255,255,255,0.12);
+                    border-radius: 16px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+                    backdrop-filter: saturate(140%) blur(12px);
+                }
+                .brand{ display:flex; align-items:center; gap:.55rem; text-decoration:none; color:#fff; font-weight:700; letter-spacing:.02em; }
+                .brand .logo{ height:36px; width:36px; object-fit:contain; }
+                .nav-links{ display:flex; align-items:center; gap:.25rem; margin-left:auto; }
+                .nav-links a{ color:rgba(255,255,255,0.92); text-decoration:none; padding:.45rem .8rem; border-radius:10px; transition: all .2s ease; font-family: prompt; font-size: .95rem; }
+                .nav-links a:hover{ background: rgba(255,255,255,0.09); color:#af8650; transform: translateY(-1px); }
+                .nav-links a.active{ background: rgba(255,255,255,0.12); color:#af8650; }
+                .nav-toggle{ display:none; margin-left:auto; background: rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.18); border-radius:10px; padding:.35rem .6rem; line-height:1; cursor:pointer; }
+                .nav-toggle:hover{ background: rgba(255,255,255,0.12); }
+                @media (max-width: 860px){
+                    .nav-toggle{ display:inline-flex; }
+                    .nav-links{ position:absolute; left: 0; right: 0; top: calc(100% + 8px); margin: 0 auto; width: calc(100% - 2rem); padding:.5rem; border-radius:12px; background: rgba(15,18,28,0.75); backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,0.12); display:none; flex-direction:column; gap:.25rem; }
+                    .glass-nav.open .nav-links{ display:flex; }
+                    .nav-links a{ padding:.6rem .8rem; }
+                }
+
+        nav {
+            margin: 0px 0px;
+        }
+
+        ul {
+            display: flex;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        li a {
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: 100;
+            transition: all 0.5s ease 0s;
+        }
+
+        li a:hover {
+            color: #af8650;
+        }
+
+        .box-1 { max-width:1100px; margin:0 auto; text-align:left; color: white; }
+        .box-1 h1{ font-size:clamp(2rem,6vw,4rem); margin:0 0 .25rem 0; font-weight:700; }
+        .box-1 h2{ font-size:clamp(1.25rem,3vw,1.5rem); color:#af8650; margin:0 0 1rem 0; }
+        .box-1 p{ font-size:clamp(.95rem,1.8vw,1.125rem); opacity:0.95; font-family:prompt; }
+
+        .box-1 button {
+            background-color: transparent;
+            border: 1px solid white;
+            border-radius: 50px;
+            padding: 5px;
+            width: 120px;
+            margin: 50px 0px;
+        }
+
+        .box-1 button a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .box-1 button:hover {
+            opacity: 0.5;
+        }
+
+        .container-1 { background-image: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.2), rgba(0,0,0,0.95)), url("images/2k_stars.jpg"); padding:3rem 1rem; }
+
+        .container-1 h1 { font-family: sansserifbook; text-align:center; color:#af8650; font-weight:700; font-size:clamp(1.5rem,3.5vw,2.25rem); margin:1rem 0; }
+
+        .container-1 a {
+            opacity: 0.7;
+            color: lightgrey;
+            font-family: prompt;
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .container-1 a:hover {
+            color: lightgrey;
+            opacity: 0.5;
+        }
+
+        .container-1 span {
+            display: flex;
+            align-items: center;
+        }
+
+        .container-1 hr {
+            border: 1px solid white;
+            opacity: 0.3;
+            width: 50%;
+        }
+
+        .box { display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; max-width:1400px; margin:0 auto; }
+
+        .box p {
+            font-family: prompt;
+        }
+
+        .box h2 {
+            font-family: prompt;
+            margin-bottom: 40px;
+            color: #af8650;
+        }
+
+        .container-1 h1 {
+            text-align: center;
+        }
+
+        .ref {
+            margin-top: 0px;
+            padding: 100px;
+        }
+
+        .ref span {
+            display: flex;
+        }
+
+        .ref h1 {
+            font-family: prompt;
+            font-weight: bold;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .ref p {
+            font-family: prompt;
+            font-size: 18px;
+        }
+
+        .ref a {
+            margin-left: 10px;
+            color: #af8650;
+            font-size: 16px;
+        }
+
+        footer { background-image: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5)), url("images/earth-1365995_1920.jpg"); padding:3rem 1rem; margin:0; background-position:center; background-size:cover; text-align:center; }
+
+        footer p {
+            font-family: prompt;
+        }
+
+        footer a {
+            opacity: 0.7;
+            color: #af8650;
+            font-family: prompt;
+            font-size: 16px;
+            margin-bottom: 50px;
+        }
+
+        footer a:hover {
+            color: lightgrey;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body style="background-color: black;">
+    <main title="Meteorite types — adapted from NHM">
+                <header class="site-header">
+                    <div class="glass-nav" role="navigation" aria-label="Primary">
+                        <a class="brand" href="index.html">
+                            <img class="logo" src="images/Saturn-Transparent-Images.png" alt="Logo" />
+                            <span>Exploration</span>
+                        </a>
+                        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><i class="bi bi-list"></i></button>
+                        <nav class="nav-links">
+                            <a href="index.html">Standalone Home</a>
+                            <a class="active" href="meteorite-types.html">Meteorite Types</a>
+                            <a href="../">Main Site</a>
+                        </nav>
+                    </div>
+                </header>
+
+        <div class="box-1">
+            <h1>Types of Meteorites</h1>
+            <h2>Stony, iron and stony-iron — what they are and why they matter</h2>
+            <p>This page summarises the main groups of meteorites and what they reveal about the early Solar System, adapted and paraphrased from the Natural History Museum (London).</p>
+        </div>
+    </main>
+
+    <section class="container-1">
+        <h1>Main groups</h1>
+        <div class="box">
+            <div style="flex:1; min-width:260px;">
+                <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener">
+                    <img src="https://www.nhm.ac.uk/content/dam/nhm-www/discover/three-types-of-meteorites/iron-meteorite-dark-fusion-crust-two-column.jpg.thumb.1920.1920.png" alt="Iron meteorite showing dark fusion crust" style="width:100%; max-width:420px; height:auto; filter:brightness(85%); border-radius:14px;">
+                </a>
+                <p style="font-size:0.85rem; opacity:0.8; margin-top:0.4rem;">Iron meteorite with dark fusion crust<br>Image: Natural History Museum, London — <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener" style="color:#af8650;">source</a></p>
+            </div>
+            <div style="flex:2; min-width:260px;">
+                <h2>Iron meteorites</h2>
+                <p>Iron meteorites are mostly iron–nickel metal (typically 90-95% iron, 5-10% nickel) and are believed to be fragments of the metallic cores of early, differentiated asteroids. They often display beautiful crystalline Widmanstätten patterns when polished and etched with acid. These distinctive criss-crossing patterns form because the metal cooled extremely slowly — at rates of only a few degrees Celsius per million years — deep inside an asteroid's core.</p>
+                <p style="margin-top:1rem;">Iron meteorites make up only about 5% of witnessed meteorite falls, but they're easier to find and recognize because of their metallic appearance, high density (7-8 g/cm³), and resistance to weathering. The largest known meteorite, the Hoba meteorite in Namibia, is an iron meteorite weighing about 60 tonnes.</p>
+                <p style="margin-top:1rem;">They provide crucial insight into planetary differentiation — the process by which heavy metals sink to the centre of a molten planetary body, while lighter silicate rocks form the mantle and crust. By studying iron meteorites, scientists can understand the cores of planets and the conditions in the early Solar System.</p>
+            </div>
+        </div>
+
+        <hr style="margin:3rem auto; opacity:0.3; width:60%;">
+
+        <div class="box">
+            <div style="flex:2; min-width:260px; order:2;">
+                <h2>Stony meteorites</h2>
+                <p>Stony meteorites are the most common type of meteorite that falls to Earth, making up about 94% of all observed falls. They are primarily made of silicate minerals and can superficially resemble terrestrial rocks, which makes them harder to identify. However, they often have a dark fusion crust formed during their fiery passage through Earth's atmosphere.</p>
+                <p style="margin-top:1rem;">Stony meteorites are divided into two main groups:</p>
+                <ul style="margin-top:1rem; font-family:prompt; opacity:0.95; line-height:1.8; padding-left:1.5rem;">
+                    <li><strong>Chondrites</strong> (about 86% of all falls) — primitive meteorites that have not been melted or differentiated since they formed 4.6 billion years ago. They contain small, spherical grains called chondrules (typically 0.1-1 mm in diameter) that formed as molten droplets in the early solar nebula. Chondrites preserve the most pristine material from the birth of our Solar System.</li>
+                    <li style="margin-top:0.8rem;"><strong>Achondrites</strong> (about 8% of falls) — meteorites from differentiated bodies (like asteroids, the Moon, or Mars) that have undergone melting and crystallisation. They lack chondrules and resemble igneous rocks like basalt or gabbro found on Earth.</li>
+                </ul>
+                <p style="margin-top:1rem;">Chondrites are especially valuable to scientists because they contain organic compounds (including amino acids), water-bearing minerals like clays, and pre-solar grains — microscopic particles of stardust that are older than the Sun itself. The famous Allende meteorite, which fell in Mexico in 1969, is a carbonaceous chondrite that has taught us more about the early Solar System than almost any other meteorite.</p>
+            </div>
+            <div style="flex:1; min-width:260px; order:1;">
+                <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener">
+                    <img src="https://www.nhm.ac.uk/content/dam/nhm-www/discover/three-types-of-meteorites/chondrite-meteorite-two-column.jpg.thumb.1920.1920.png" alt="Chondrite stony meteorite" style="width:100%; max-width:420px; height:auto; filter:brightness(85%); border-radius:14px;">
+                </a>
+                <p style="font-size:0.85rem; opacity:0.8; margin-top:0.4rem;">Chondrite stony meteorite<br>Image: Natural History Museum, London — <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener" style="color:#af8650;">source</a></p>
+            </div>
+        </div>
+
+        <hr style="margin:3rem auto; opacity:0.3; width:60%;">
+
+        <div class="box">
+            <div style="flex:1; min-width:260px;">
+                <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener">
+                    <img src="https://www.nhm.ac.uk/content/dam/nhm-www/discover/three-types-of-meteorites/Estherville-mesosiderite-meteorite-two-column.jpg.thumb.1920.1920.png" alt="Estherville mesosiderite stony-iron meteorite" style="width:100%; max-width:420px; height:auto; filter:brightness(85%); border-radius:14px;">
+                </a>
+                <p style="font-size:0.85rem; opacity:0.8; margin-top:0.4rem;">Estherville mesosiderite stony-iron meteorite<br>Image: Natural History Museum, London — <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener" style="color:#af8650;">source</a></p>
+            </div>
+            <div style="flex:2; min-width:260px;">
+                <h2>Stony-iron meteorites</h2>
+                <p>Stony-iron meteorites are the rarest of the three main groups, making up only about 1% of all meteorite falls. They are remarkable mixtures containing roughly equal amounts of metal (iron-nickel) and silicate minerals, creating some of the most visually stunning specimens in meteorite collections worldwide.</p>
+                <p style="margin-top:1rem;">The two main types are:</p>
+                <ul style="margin-top:1rem; font-family:prompt; opacity:0.95; line-height:1.8; padding-left:1.5rem;">
+                    <li><strong>Pallasites</strong> — composed of gem-quality olivine crystals (the mineral that makes the gemstone peridot) embedded in a nickel-iron matrix. When sliced thin and backlit, they can resemble stained glass windows and are among the most beautiful of all meteorites. The olivine crystals are typically yellow-green to amber in color and can be centimeters across. Pallasites are thought to form at the core-mantle boundary of differentiated asteroids.</li>
+                    <li style="margin-top:0.8rem;"><strong>Mesosiderites</strong> — a chaotic mixture of metal fragments and silicate rocks, formed by violent collisions between asteroids. Unlike the ordered structure of pallasites, mesosiderites look like cosmic breccias — jumbled rocks cemented together by impact processes.</li>
+                </ul>
+                <p style="margin-top:1rem;">Stony-iron meteorites provide unique insights into the interior structure of asteroids and the catastrophic impacts that can mix core material with crustal rocks. The famous Fukang meteorite, discovered in China in 2000, is a spectacular pallasite specimen that has become one of the most photographed meteorites in the world.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="ref">
+        <h1>Why study meteorites?</h1>
+        <p style="margin-bottom:1.5rem;">Meteorites are our only easily accessible samples of extraterrestrial material. While space missions can return samples from specific targets, meteorites arrive naturally and represent a diverse cross-section of Solar System materials.</p>
+        
+        <div style="max-width:900px; margin:0 auto;">
+            <div style="margin-bottom:2rem;">
+                <h3 style="color:#af8650; font-size:1.3rem; margin-bottom:0.5rem;">🔬 Scientific windows into the past</h3>
+                <p>Meteorites preserve a 4.6-billion-year record of the Solar System's formation and evolution. Chondrites, in particular, have barely changed since they formed, making them time capsules from the birth of our planetary system.</p>
+            </div>
+            
+            <div style="margin-bottom:2rem;">
+                <h3 style="color:#af8650; font-size:1.3rem; margin-bottom:0.5rem;">🌍 Building blocks of planets</h3>
+                <p>By studying meteorites, scientists can understand how planets formed through accretion and differentiation. Iron meteorites show us what lies at Earth's core, while achondrites reveal processes that shaped rocky planetary crusts.</p>
+            </div>
+            
+            <div style="margin-bottom:2rem;">
+                <h3 style="color:#af8650; font-size:1.3rem; margin-bottom:0.5rem;">🧬 Clues to life's origins</h3>
+                <p>Carbonaceous chondrites contain organic molecules, including amino acids (the building blocks of proteins) and nucleobases (components of DNA and RNA). These compounds may have been delivered to early Earth by meteorite impacts, potentially contributing to the origin of life.</p>
+            </div>
+            
+            <div style="margin-bottom:2rem;">
+                <h3 style="color:#af8650; font-size:1.3rem; margin-bottom:0.5rem;">⚠️ Planetary defense</h3>
+                <p>Understanding meteorite compositions helps us predict the effects of future asteroid impacts and develop strategies to deflect potentially hazardous objects. The Chelyabinsk meteor of 2013 and the Tunguska event of 1908 remind us that impacts are not just ancient history.</p>
+            </div>
+        </div>
+
+        <hr style="margin:3rem auto; opacity:0.3; width:60%;">
+
+        <h1 style="margin-top:3rem;">References and further reading</h1>
+        <p>The content on this page is adapted and expanded from the Natural History Museum, London, and NASA resources. For detailed scientific information, visit:</p>
+        <span style="margin-top:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <a href="https://www.nhm.ac.uk/discover/types-of-meteorites.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Types of meteorites (NHM)</a>
+            <a href="https://www.nhm.ac.uk/discover/meteorites.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Meteorites overview (NHM)</a>
+            <a href="https://www.nasa.gov/solar-system/meteors-and-meteorites/" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> NASA Meteors & Meteorites</a>
+            <a href="https://www.lpi.usra.edu/meteor/" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Meteoritical Society Database</a>
+        </span>
+    </section>
+
+    <footer>
+        <p>Exploration — Space Science</p>
+        <a href="index.html">← Back to home</a>
+    </footer>
+
+        <script src="js/bootstrap.min.js"></script>
+        <script>
+            // Mobile nav toggle
+            (function(){
+                const nav = document.querySelector('.glass-nav');
+                const btn = document.querySelector('.nav-toggle');
+                if(!nav || !btn) return;
+                btn.addEventListener('click', () => {
+                    const open = nav.classList.toggle('open');
+                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+                // Close when clicking outside on mobile
+                document.addEventListener('click', (e) => {
+                    if(window.innerWidth > 860) return;
+                    if(!nav.contains(e.target)) {
+                        nav.classList.remove('open');
+                        btn.setAttribute('aria-expanded','false');
+                    }
+                });
+                // Close on resize crossing breakpoint
+                window.addEventListener('resize', () => {
+                    if(window.innerWidth > 860) {
+                        nav.classList.remove('open');
+                        btn.setAttribute('aria-expanded','false');
+                    }
+                });
+            })();
+        </script>
+</body>
+
+</html>
