@@ -157,6 +157,18 @@ function createNewsCard(newsItem) {
   imageSection.className = 'news-image';
   imageSection.style.backgroundImage = newsItem.urlToImage ? `url(${newsItem.urlToImage})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
   
+  // Add link icon overlay on image
+  if (newsItem.url) {
+    const linkOverlay = document.createElement('div');
+    linkOverlay.className = 'news-link-overlay';
+    linkOverlay.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    imageSection.appendChild(linkOverlay);
+  }
+  
   const contentSection = document.createElement('div');
   contentSection.className = 'news-content';
   
@@ -167,9 +179,16 @@ function createNewsCard(newsItem) {
   card.appendChild(imageSection);
   card.appendChild(contentSection);
   
-  card.addEventListener('click', () => {
-    if (newsItem.url) window.open(newsItem.url, '_blank');
-  });
+  if (newsItem.url) {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Opening news:', newsItem.title, newsItem.url);
+      window.open(newsItem.url, '_blank', 'noopener,noreferrer');
+    });
+  } else {
+    card.style.opacity = '0.7';
+    card.style.cursor = 'default';
+  }
   
   return card;
 }
@@ -177,6 +196,14 @@ function createNewsCard(newsItem) {
 function createPaperCard(paper) {
   const card = document.createElement('div');
   card.className = 'paper-card';
+  
+  // Add clickable indicator if URL exists
+  if (paper.url) {
+    card.style.cursor = 'pointer';
+  } else {
+    card.style.opacity = '0.7';
+    card.style.cursor = 'default';
+  }
   
   const icon = document.createElement('div');
   icon.className = 'paper-icon';
@@ -202,9 +229,23 @@ function createPaperCard(paper) {
   card.appendChild(icon);
   card.appendChild(content);
   
-  card.addEventListener('click', () => {
-    if (paper.url) window.open(paper.url, '_blank');
-  });
+  // Add click to open link icon if URL exists
+  if (paper.url) {
+    const linkIcon = document.createElement('div');
+    linkIcon.className = 'paper-link-icon';
+    linkIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    card.appendChild(linkIcon);
+    
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Opening paper:', paper.title, paper.url);
+      window.open(paper.url, '_blank', 'noopener,noreferrer');
+    });
+  }
   
   return card;
 }
