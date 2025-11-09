@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini API Integration Tests</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e0e0e0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #64b5f6;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+
+    .subtitle {
+      color: #90caf9;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(100, 181, 246, 0.3);
+    }
+
+    button {
+      background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
+    }
+
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .test-results {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(100, 181, 246, 0.3);
+    }
+
+    .test-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #64b5f6;
+    }
+
+    .test-item.running {
+      border-left-color: #ffa726;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .test-item.passed {
+      border-left-color: #66bb6a;
+    }
+
+    .test-item.failed {
+      border-left-color: #ef5350;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .test-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #90caf9;
+    }
+
+    .test-status {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background: #555;
+      color: #aaa;
+    }
+
+    .status-running {
+      background: #ff9800;
+      color: white;
+    }
+
+    .status-passed {
+      background: #4caf50;
+      color: white;
+    }
+
+    .status-failed {
+      background: #f44336;
+      color: white;
+    }
+
+    .test-question {
+      color: #ffd54f;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .test-details {
+      font-size: 0.9em;
+      color: #b0b0b0;
+      margin-top: 10px;
+    }
+
+    .validation-item {
+      padding: 5px 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .validation-field {
+      font-weight: bold;
+      min-width: 100px;
+    }
+
+    .validation-pass {
+      color: #66bb6a;
+    }
+
+    .validation-fail {
+      color: #ef5350;
+    }
+
+    .validation-present {
+      color: #90caf9;
+    }
+
+    .response-preview {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 0.85em;
+      color: #e0e0e0;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .summary {
+      background: rgba(100, 181, 246, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      border: 2px solid #64b5f6;
+    }
+
+    .summary h2 {
+      color: #64b5f6;
+      margin-bottom: 15px;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: #b0b0b0;
+    }
+
+    .error-message {
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid #ef5350;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      color: #ffcdd2;
+    }
+
+    .manual-test-note {
+      background: rgba(255, 167, 38, 0.2);
+      border: 1px solid #ffa726;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      color: #ffe0b2;
+    }
+
+    .manual-test-note h4 {
+      color: #ffb74d;
+      margin-bottom: 10px;
+    }
+
+    .manual-test-note ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    .manual-test-note li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Gemini API Integration Test Suite</h1>
+    <p class="subtitle">Testing Requirements: 1.1, 1.2, 1.3, 1.4</p>
+
+    <div class="controls">
+      <button id="runAllBtn">Run All Tests</button>
+      <button id="runSimpleBtn">Run Simple Tests Only</button>
+      <button id="runComplexBtn">Run Complex Tests Only</button>
+      <button id="clearBtn">Clear Results</button>
+    </div>
+
+    <div class="test-results" id="testResults"></div>
+
+    <div class="summary" id="summary" style="display: none;">
+      <h2>Test Summary</h2>
+      <div class="summary-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalTests">0</div>
+          <div class="stat-label">Total Tests</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #66bb6a;" id="passedTests">0</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #ef5350;" id="failedTests">0</div>
+          <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #64b5f6;" id="successRate">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { callGeminiAPI } from './api-service.js';
+
+    // Test configuration
+    const TESTS = {
+      simple: [
+        "What is a meteor?",
+        "When is the next meteor shower?",
+        "How fast do meteors travel?"
+      ],
+      complex: [
+        "Can you explain the difference between a meteor, meteoroid, and meteorite, and also tell me about the most famous meteor showers?",
+        "What causes meteor showers and how can I best observe them? Also, what equipment do I need?"
+      ]
+    };
+
+    let testResults = [];
+    let currentTestIndex = 0;
+
+    /**
+     * Validate JSON response structure
+     */
+    function validateResponseStructure(response) {
+      const validations = [];
+      
+      // Check if response has text field (required)
+      if (response.text && typeof response.text === 'string') {
+        validations.push({ field: 'text', status: 'PASS', value: `${response.text.length} chars` });
+      } else {
+        validations.push({ field: 'text', status: 'FAIL', value: 'Missing or invalid' });
+      }
+      
+      // Check optional fields
+      const optionalFields = ['Image', 'Video', 'paper', 'Search'];
+      optionalFields.forEach(field => {
+        if (response[field]) {
+          if (typeof response[field] === 'string') {
+            validations.push({ field, status: 'PRESENT', value: response[field] });
+          } else {
+            validations.push({ field, status: 'INVALID', value: 'Not a string' });
+          }
+        }
+      });
+      
+      return validations;
+    }
+
+    /**
+     * Create test item HTML
+     */
+    function createTestItem(testId, question, type) {
+      return `
+        <div class="test-item" id="test-${testId}">
+          <div class="test-header">
+            <div class="test-title">Test ${testId}: ${type.toUpperCase()} Query</div>
+            <div class="test-status status-pending">PENDING</div>
+          </div>
+          <div class="test-question">"${question}"</div>
+          <div class="test-details" id="details-${testId}"></div>
+        </div>
+      `;
+    }
+
+    /**
+     * Update test status
+     */
+    function updateTestStatus(testId, status, details = '') {
+      const testItem = document.getElementById(`test-${testId}`);
+      const statusEl = testItem.querySelector('.test-status');
+      const detailsEl = document.getElementById(`details-${testId}`);
+      
+      testItem.className = `test-item ${status}`;
+      statusEl.className = `test-status status-${status}`;
+      statusEl.textContent = status.toUpperCase();
+      
+      if (details) {
+        detailsEl.innerHTML = details;
+      }
+    }
+
+    /**
+     * Run a single test
+     */
+    async function runTest(testId, question, type) {
+      updateTestStatus(testId, 'running', '<div>⏳ Sending request to Gemini API...</div>');
+      
+      try {
+        const startTime = Date.now();
+        const response = await callGeminiAPI(question);
+        const duration = Date.now() - startTime;
+        
+        // Validate response structure
+        const validations = validateResponseStructure(response);
+        const hasRequiredField = validations.some(v => v.field === 'text' && v.status === 'PASS');
+        
+        // Build details HTML
+        let detailsHTML = `<div>✓ Response received in ${duration}ms</div>`;
+        detailsHTML += '<div style="margin-top: 10px;"><strong>Response Validation:</strong></div>';
+        
+        validations.forEach(v => {
+          const statusClass = v.status === 'PASS' || v.status === 'PRESENT' ? 'validation-pass' : 
+                             v.status === 'FAIL' || v.status === 'INVALID' ? 'validation-fail' : 'validation-present';
+          detailsHTML += `
+            <div class="validation-item">
+              <span class="validation-field">${v.field}:</span>
+              <span class="${statusClass}">[${v.status}]</span>
+              <span>${v.value}</span>
+            </div>
+          `;
+        });
+        
+        // Add response preview
+        if (response.text) {
+          const preview = response.text.substring(0, 200) + (response.text.length > 200 ? '...' : '');
+          detailsHTML += `<div class="response-preview">${preview}</div>`;
+        }
+        
+        if (hasRequiredField) {
+          updateTestStatus(testId, 'passed', detailsHTML);
+          return { success: true, duration, response, validations };
+        } else {
+          detailsHTML += '<div class="error-message">❌ Missing required text field</div>';
+          updateTestStatus(testId, 'failed', detailsHTML);
+          return { success: false, duration, error: 'Missing required text field', validations };
+        }
+        
+      } catch (error) {
+        const errorHTML = `<div class="error-message">❌ ${error.message}</div>`;
+        updateTestStatus(testId, 'failed', errorHTML);
+        return { success: false, error: error.message };
+      }
+    }
+
+    /**
+     * Run all tests
+     */
+    async function runAllTests(testType = 'all') {
+      const resultsContainer = document.getElementById('testResults');
+      resultsContainer.innerHTML = '';
+      testResults = [];
+      currentTestIndex = 0;
+      
+      const testsToRun = [];
+      
+      if (testType === 'all' || testType === 'simple') {
+        TESTS.simple.forEach((q, i) => {
+          testsToRun.push({ question: q, type: 'simple', id: testsToRun.length + 1 });
+        });
+      }
+      
+      if (testType === 'all' || testType === 'complex') {
+        TESTS.complex.forEach((q, i) => {
+          testsToRun.push({ question: q, type: 'complex', id: testsToRun.length + 1 });
+        });
+      }
+      
+      // Create test items
+      testsToRun.forEach(test => {
+        resultsContainer.innerHTML += createTestItem(test.id, test.question, test.type);
+      });
+      
+      // Add error handling test note
+      if (testType === 'all') {
+        resultsContainer.innerHTML += `
+          <div class="test-item">
+            <div class="test-header">
+              <div class="test-title">Test ${testsToRun.length + 1}: ERROR HANDLING - Invalid API Key</div>
+              <div class="test-status status-pending">MANUAL</div>
+            </div>
+            <div class="manual-test-note">
+              <h4>⚠️ Manual Test Required</h4>
+              <p>To test invalid API key handling (Requirement 1.4):</p>
+              <ol>
+                <li>Temporarily change VITE_GEMINI_API_KEY in .env to an invalid value</li>
+                <li>Reload this page</li>
+                <li>Run a test and verify error message appears</li>
+                <li>Expected error: "I'm having trouble connecting right now. Please try again in a moment."</li>
+                <li>Restore the correct API key</li>
+              </ol>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Disable buttons during test run
+      document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+      
+      // Run tests sequentially with delay
+      for (const test of testsToRun) {
+        const result = await runTest(test.id, test.question, test.type);
+        testResults.push({ ...test, ...result });
+        
+        // Wait 2 seconds between tests to avoid rate limiting
+        if (test.id < testsToRun.length) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
+      
+      // Re-enable buttons
+      document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+      
+      // Show summary
+      showSummary();
+    }
+
+    /**
+     * Show test summary
+     */
+    function showSummary() {
+      const summary = document.getElementById('summary');
+      const passed = testResults.filter(r => r.success).length;
+      const failed = testResults.filter(r => !r.success).length;
+      const total = testResults.length;
+      const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : 0;
+      
+      document.getElementById('totalTests').textContent = total;
+      document.getElementById('passedTests').textContent = passed;
+      document.getElementById('failedTests').textContent = failed;
+      document.getElementById('successRate').textContent = successRate + '%';
+      
+      summary.style.display = 'block';
+    }
+
+    /**
+     * Clear results
+     */
+    function clearResults() {
+      document.getElementById('testResults').innerHTML = '';
+      document.getElementById('summary').style.display = 'none';
+      testResults = [];
+    }
+
+    // Event listeners
+    document.getElementById('runAllBtn').addEventListener('click', () => runAllTests('all'));
+    document.getElementById('runSimpleBtn').addEventListener('click', () => runAllTests('simple'));
+    document.getElementById('runComplexBtn').addEventListener('click', () => runAllTests('complex'));
+    document.getElementById('clearBtn').addEventListener('click', clearResults);
+  </script>
+</body>
+</html>

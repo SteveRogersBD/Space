@@ -1,0 +1,171 @@
+openapi: 3.0.0
+info:
+  title: Space Agent API
+  description: API endpoints for space-related image and news search
+  version: 1.0.0
+  contact:
+    name: Space Agent Team
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /api/images:
+    get:
+      summary: Search space images
+      description: Retrieves a list of image URLs based on the search query
+      operationId: searchImages
+      tags:
+        - Images
+      parameters:
+        - name: search
+          in: query
+          required: true
+          description: Search query for space images
+          schema:
+            type: string
+          example: mars
+      responses:
+        '200':
+          description: Successful response with list of image URLs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uri
+              example:
+                - https://example.com/image1.jpg
+                - https://example.com/image2.jpg
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /api/news:
+    get:
+      summary: Search space news
+      description: Retrieves a list of news articles based on the search query
+      operationId: searchNews
+      tags:
+        - News
+      parameters:
+        - name: search
+          in: query
+          required: true
+          description: Search query for space news
+          schema:
+            type: string
+          example: nasa
+      responses:
+        '200':
+          description: Successful response with list of news articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/News'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /api/papers:
+    get:
+      summary: Search research papers
+      description: Retrieves a list of research papers based on the search query
+      operationId: searchPaper
+      tags:
+        - Papers
+      parameters:
+        - name: search
+          in: query
+          required: true
+          description: Search query for research papers
+          schema:
+            type: string
+          example: black holes
+      responses:
+        '200':
+          description: Successful response with list of research papers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Paper'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    News:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the news article
+        description:
+          type: string
+          description: Brief description of the article
+        url:
+          type: string
+          format: uri
+          description: URL to the full article
+        publishedAt:
+          type: string
+          format: date-time
+          description: Publication date and time
+        source:
+          type: string
+          description: News source name
+      example:
+        title: "NASA Discovers New Exoplanet"
+        description: "Scientists have found a potentially habitable planet"
+        url: "https://example.com/news/article"
+        publishedAt: "2025-11-09T10:00:00Z"
+        source: "Space News"
+
+    Paper:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the research paper
+        authors:
+          type: string
+          description: Authors of the paper
+        abstract:
+          type: string
+          description: Abstract or summary of the paper
+        url:
+          type: string
+          format: uri
+          description: URL to the full paper
+        publishedDate:
+          type: string
+          format: date
+          description: Publication date
+        journal:
+          type: string
+          description: Journal or publication name
+      example:
+        title: "Gravitational Waves from Black Hole Mergers"
+        authors: "J. Smith, M. Johnson"
+        abstract: "This paper presents findings on gravitational waves detected from merging black holes"
+        url: "https://example.com/paper/12345"
+        publishedDate: "2025-10-15"
+        journal: "Astrophysical Journal"
+
+tags:
+  - name: Images
+    description: Space image search operations
+  - name: News
+    description: Space news search operations
+  - name: Papers
+    description: Research paper search operations

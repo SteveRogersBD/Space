@@ -1,4 +1,9 @@
 import * as THREE from 'three';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
 // Create THREE.Scene instance
 const scene = new THREE.Scene();
@@ -162,39 +167,35 @@ function addUserMessage(content) {
   userMessagesStack.appendChild(messageDiv);
 }
 
-function getBotResponse(userMessage) {
-  const lowerMessage = userMessage.toLowerCase();
-  
-  if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-    return "Hello! I'm Meteor, your guide to the fascinating world of meteors and space rocks. What would you like to know?";
-  } else if (lowerMessage.includes('meteor')) {
-    return "Meteors are space rocks that burn up in Earth's atmosphere, creating bright streaks of light we call 'shooting stars'. Most are smaller than a grain of sand!";
-  } else if (lowerMessage.includes('meteorite')) {
-    return "A meteorite is a meteor that survives its journey through the atmosphere and lands on Earth's surface. They're incredibly valuable for scientific research!";
-  } else if (lowerMessage.includes('asteroid')) {
-    return "Asteroids are rocky objects orbiting the Sun, mostly found in the asteroid belt between Mars and Jupiter. When they enter Earth's atmosphere, they become meteors!";
-  } else if (lowerMessage.includes('comet')) {
-    return "Comets are icy bodies that release gas and dust, forming beautiful tails when they approach the Sun. They're like cosmic snowballs!";
-  } else if (lowerMessage.includes('shower')) {
-    return "Meteor showers occur when Earth passes through debris left by comets. Famous ones include the Perseids in August and Geminids in December!";
-  } else if (lowerMessage.includes('help') || lowerMessage.includes('what')) {
-    return "I can tell you about meteors, meteorites, asteroids, comets, meteor showers, and how they impact Earth. What interests you most?";
-  } else {
-    return "That's an interesting question about space! I specialize in meteors and related phenomena. Try asking me about meteors, asteroids, or meteor showers!";
+async function getBotResponse(userMessage) {
+  try {
+    const prompt = `You are Meteor, a friendly AI assistant specializing in meteors, asteroids, comets, and space phenomena. 
+Answer the following question in a conversational, engaging way. Keep responses concise (2-3 sentences max) and educational.
+
+User question: ${userMessage}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
+  } catch (error) {
+    console.error('Gemini API Error:', error);
+    return "I'm having trouble connecting to my knowledge base right now. Please try again in a moment!";
   }
 }
 
-function sendMessage() {
+async function sendMessage() {
   const message = userInput.value.trim();
   
   if (message) {
     addUserMessage(message);
     userInput.value = '';
     
-    setTimeout(() => {
-      const response = getBotResponse(message);
-      updateThoughtBubble(response);
-    }, 500);
+    // Show loading state
+    updateThoughtBubble("Thinking...");
+    
+    // Get AI response
+    const response = await getBotResponse(message);
+    updateThoughtBubble(response);
   }
 }
 

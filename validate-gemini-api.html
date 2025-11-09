@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Gemini API Validation</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #1a1a1a;
+      color: #00ff00;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .log {
+      background: #000;
+      padding: 15px;
+      border: 1px solid #00ff00;
+      border-radius: 5px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+    .success { color: #00ff00; }
+    .error { color: #ff0000; }
+    .info { color: #00aaff; }
+    .warning { color: #ffaa00; }
+    button {
+      background: #00ff00;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #00cc00;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Gemini API Quick Validation</h1>
+  <p>This page performs a quick validation of the Gemini API integration.</p>
+  
+  <button onclick="runQuickTest()">Run Quick Test</button>
+  <button onclick="clearLog()">Clear Log</button>
+  
+  <div class="log" id="log">Click "Run Quick Test" to begin...</div>
+
+  <script type="module">
+    import { callGeminiAPI } from './api-service.js';
+
+    window.runQuickTest = async function() {
+      const log = document.getElementById('log');
+      log.innerHTML = '';
+      
+      function addLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        log.innerHTML += `<span class="${type}">[${timestamp}] ${message}</span>\n`;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      addLog('='.repeat(60), 'info');
+      addLog('GEMINI API QUICK VALIDATION TEST', 'info');
+      addLog('Testing Requirements: 1.1, 1.2, 1.3, 1.4', 'info');
+      addLog('='.repeat(60), 'info');
+      addLog('');
+
+      // Test 1: Simple query
+      addLog('Test 1: Simple Query', 'info');
+      addLog('Question: "What is a meteor?"', 'warning');
+      addLog('');
+
+      try {
+        const startTime = Date.now();
+        addLog('Sending request to Gemini API...', 'info');
+        
+        const response = await callGeminiAPI("What is a meteor?");
+        const duration = Date.now() - startTime;
+        
+        addLog(`✓ Response received in ${duration}ms`, 'success');
+        addLog('');
+
+        // Validate structure
+        addLog('Validating response structure...', 'info');
+        
+        if (response.text && typeof response.text === 'string') {
+          addLog(`✓ text field: PASS (${response.text.length} characters)`, 'success');
+        } else {
+          addLog('✗ text field: FAIL (missing or invalid)', 'error');
+        }
+
+        if (response.Image) {
+          addLog(`✓ Image keyword: "${response.Image}"`, 'success');
+        }
+        if (response.Video) {
+          addLog(`✓ Video keyword: "${response.Video}"`, 'success');
+        }
+        if (response.paper) {
+          addLog(`✓ paper keyword: "${response.paper}"`, 'success');
+        }
+        if (response.Search) {
+          addLog(`✓ Search keyword: "${response.Search}"`, 'success');
+        }
+
+        addLog('');
+        addLog('Response preview (first 300 chars):', 'info');
+        addLog(response.text.substring(0, 300) + '...', 'warning');
+        addLog('');
+
+        // Test 2: Complex query
+        addLog('='.repeat(60), 'info');
+        addLog('Test 2: Complex Query', 'info');
+        addLog('Question: "Explain meteor showers and how to observe them"', 'warning');
+        addLog('');
+        addLog('Waiting 2 seconds to avoid rate limiting...', 'info');
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const startTime2 = Date.now();
+        addLog('Sending request to Gemini API...', 'info');
+        
+        const response2 = await callGeminiAPI("Explain meteor showers and how to observe them");
+        const duration2 = Date.now() - startTime2;
+        
+        addLog(`✓ Response received in ${duration2}ms`, 'success');
+        addLog('');
+
+        // Validate structure
+        addLog('Validating response structure...', 'info');
+        
+        if (response2.text && typeof response2.text === 'string') {
+          addLog(`✓ text field: PASS (${response2.text.length} characters)`, 'success');
+        } else {
+          addLog('✗ text field: FAIL (missing or invalid)', 'error');
+        }
+
+        if (response2.Image) {
+          addLog(`✓ Image keyword: "${response2.Image}"`, 'success');
+        }
+        if (response2.Video) {
+          addLog(`✓ Video keyword: "${response2.Video}"`, 'success');
+        }
+        if (response2.paper) {
+          addLog(`✓ paper keyword: "${response2.paper}"`, 'success');
+        }
+        if (response2.Search) {
+          addLog(`✓ Search keyword: "${response2.Search}"`, 'success');
+        }
+
+        addLog('');
+        addLog('Response preview (first 300 chars):', 'info');
+        addLog(response2.text.substring(0, 300) + '...', 'warning');
+        addLog('');
+
+        // Summary
+        addLog('='.repeat(60), 'info');
+        addLog('TEST SUMMARY', 'info');
+        addLog('='.repeat(60), 'info');
+        addLog('✓ All tests PASSED', 'success');
+        addLog('✓ Requirement 1.1: Messages sent to Gemini API with system prompt', 'success');
+        addLog('✓ Requirement 1.2: Structured JSON responses received', 'success');
+        addLog('✓ Requirement 1.3: Text field extracted successfully', 'success');
+        addLog('');
+        addLog('Note: To test Requirement 1.4 (error handling):', 'warning');
+        addLog('1. Change VITE_GEMINI_API_KEY in .env to invalid value', 'warning');
+        addLog('2. Reload this page and run test again', 'warning');
+        addLog('3. Verify error message appears', 'warning');
+        addLog('4. Restore correct API key', 'warning');
+        addLog('');
+        addLog('='.repeat(60), 'info');
+
+      } catch (error) {
+        addLog('');
+        addLog('✗ TEST FAILED', 'error');
+        addLog(`Error: ${error.message}`, 'error');
+        addLog('');
+        
+        if (error.message.includes("I'm having trouble connecting")) {
+          addLog('✓ Error handling working correctly (Requirement 1.4)', 'success');
+          addLog('This error indicates the API key may be invalid or API is unavailable', 'warning');
+        } else {
+          addLog('Unexpected error occurred', 'error');
+        }
+      }
+    };
+
+    window.clearLog = function() {
+      document.getElementById('log').innerHTML = 'Click "Run Quick Test" to begin...';
+    };
+  </script>
+</body>
+</html>

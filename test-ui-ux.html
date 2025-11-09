@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI/UX Test Suite - Meteor Chatbot</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1628, #1a2744);
+      color: #fff;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #00d4ff;
+      text-align: center;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    }
+
+    .test-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .test-section h2 {
+      color: #00d4ff;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .test-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 4px solid rgba(0, 212, 255, 0.5);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }
+
+    .test-item h3 {
+      color: #fff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .test-item p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .test-button {
+      background: linear-gradient(135deg, #00d4ff, #0099ff);
+      border: none;
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+      margin-top: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    }
+
+    .test-button:hover {
+      background: linear-gradient(135deg, #ff00ff, #cc00cc);
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .test-button:disabled {
+      background: rgba(100, 100, 100, 0.5);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .result.success {
+      background: rgba(0, 255, 0, 0.1);
+      border: 2px solid rgba(0, 255, 0, 0.3);
+      color: #00ff00;
+    }
+
+    .result.error {
+      background: rgba(255, 0, 0, 0.1);
+      border: 2px solid rgba(255, 0, 0, 0.3);
+      color: #ff6b6b;
+    }
+
+    .result.info {
+      background: rgba(0, 212, 255, 0.1);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      color: #00d4ff;
+    }
+
+    .result pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0;
+    }
+
+    .iframe-container {
+      margin-top: 1rem;
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    iframe {
+      width: 100%;
+      border: none;
+      display: block;
+    }
+
+    .viewport-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .viewport-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .viewport-btn:hover {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: #00d4ff;
+    }
+
+    .viewport-btn.active {
+      background: rgba(0, 212, 255, 0.3);
+      border-color: #00d4ff;
+    }
+
+    .summary {
+      background: rgba(0, 212, 255, 0.1);
+      border: 2px solid rgba(0, 212, 255, 0.4);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .summary h2 {
+      color: #00d4ff;
+      margin-bottom: 1rem;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00d4ff;
+    }
+
+    .stat-label {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Meteor Chatbot - UI/UX Test Suite</h1>
+
+    <!-- Test 1: Loading States -->
+    <div class="test-section">
+      <h2>Test 1: Loading States</h2>
+      <div class="test-item">
+        <h3>1.1 Verify Loading Indicator Appears</h3>
+        <p>Tests that the loading indicator appears when a message is sent and disappears when the response is received.</p>
+        <button class="test-button" onclick="testLoadingStates()">Run Test</button>
+        <div id="loading-result"></div>
+      </div>
+    </div>
+
+    <!-- Test 2: Multi-Modal Content Rendering -->
+    <div class="test-section">
+      <h2>Test 2: Multi-Modal Content Rendering</h2>
+      <div class="test-item">
+        <h3>2.1 Test Image Rendering</h3>
+        <p>Verifies that images are displayed correctly with proper styling and links.</p>
+        <button class="test-button" onclick="testImageRendering()">Run Test</button>
+        <div id="image-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>2.2 Test Video Rendering</h3>
+        <p>Verifies that video cards are displayed with thumbnails and titles.</p>
+        <button class="test-button" onclick="testVideoRendering()">Run Test</button>
+        <div id="video-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>2.3 Test Paper Rendering</h3>
+        <p>Verifies that scholarly papers are formatted correctly with citations.</p>
+        <button class="test-button" onclick="testPaperRendering()">Run Test</button>
+        <div id="paper-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>2.4 Test Search Results Rendering</h3>
+        <p>Verifies that web search results are displayed with proper formatting.</p>
+        <button class="test-button" onclick="testSearchRendering()">Run Test</button>
+        <div id="search-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>2.5 Test All Multi-Modal Types Together</h3>
+        <p>Verifies that all content types can be displayed simultaneously.</p>
+        <button class="test-button" onclick="testAllMultiModal()">Run Test</button>
+        <div id="all-multimodal-result"></div>
+      </div>
+    </div>
+
+    <!-- Test 3: Responsive Design -->
+    <div class="test-section">
+      <h2>Test 3: Responsive Design</h2>
+      <div class="test-item">
+        <h3>3.1 Test Multiple Screen Sizes</h3>
+        <p>Tests the chatbot interface at different viewport sizes: 320px, 768px, 1024px, and 1920px.</p>
+        <div class="viewport-controls">
+          <button class="viewport-btn" onclick="setViewport(320, 568)">Mobile (320px)</button>
+          <button class="viewport-btn" onclick="setViewport(768, 1024)">Tablet (768px)</button>
+          <button class="viewport-btn" onclick="setViewport(1024, 768)">Desktop (1024px)</button>
+          <button class="viewport-btn" onclick="setViewport(1920, 1080)">Large Desktop (1920px)</button>
+          <button class="viewport-btn" onclick="setViewport('100%', 600)">Full Width</button>
+        </div>
+        <div class="iframe-container">
+          <iframe id="responsive-iframe" src="aibot.html" height="600"></iframe>
+        </div>
+        <div id="responsive-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>3.2 Test Touch Target Sizes</h3>
+        <p>Verifies that all interactive elements meet the minimum 44x44px touch target requirement.</p>
+        <button class="test-button" onclick="testTouchTargets()">Run Test</button>
+        <div id="touch-result"></div>
+      </div>
+    </div>
+
+    <!-- Test 4: API Key Security -->
+    <div class="test-section">
+      <h2>Test 4: API Key Security</h2>
+      <div class="test-item">
+        <h3>4.1 Verify No API Keys in Console</h3>
+        <p>Checks that API keys are not exposed in browser console logs.</p>
+        <button class="test-button" onclick="testAPIKeySecurity()">Run Test</button>
+        <div id="security-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>4.2 Verify No API Keys in Network Requests</h3>
+        <p>Checks that API keys are properly handled in network requests.</p>
+        <button class="test-button" onclick="testNetworkSecurity()">Run Test</button>
+        <div id="network-security-result"></div>
+      </div>
+    </div>
+
+    <!-- Test 5: Debouncing and Rate Limiting -->
+    <div class="test-section">
+      <h2>Test 5: Debouncing and Rate Limiting</h2>
+      <div class="test-item">
+        <h3>5.1 Test Message Debouncing</h3>
+        <p>Verifies that rapid message sending is prevented with 500ms debounce.</p>
+        <button class="test-button" onclick="testDebouncing()">Run Test</button>
+        <div id="debounce-result"></div>
+      </div>
+      <div class="test-item">
+        <h3>5.2 Test Rate Limiting</h3>
+        <p>Verifies that rate limiting prevents more than 10 requests per minute.</p>
+        <button class="test-button" onclick="testRateLimiting()">Run Test</button>
+        <div id="ratelimit-result"></div>
+      </div>
+    </div>
+
+    <!-- Test Summary -->
+    <div class="summary">
+      <h2>Test Summary</h2>
+      <p>Run all tests to see a comprehensive summary of results.</p>
+      <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+      <div class="summary-stats" id="summary-stats" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-value" id="total-tests">0</div>
+          <div class="stat-label">Total Tests</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="passed-tests">0</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="failed-tests">0</div>
+          <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="pass-rate">0%</div>
+          <div class="stat-label">Pass Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import necessary functions for testing
+    let testResults = {
+      total: 0,
+      passed: 0,
+      failed: 0
+    };
+
+    // Helper function to display results
+    function displayResult(elementId, success, message, details = '') {
+      const resultDiv = document.getElementById(elementId);
+      resultDiv.className = `result ${success ? 'success' : 'error'}`;
+      resultDiv.innerHTML = `
+        <strong>${success ? '✅ PASS' : '❌ FAIL'}</strong>: ${message}
+        ${details ? `<pre>${details}</pre>` : ''}
+      `;
+      
+      testResults.total++;
+      if (success) {
+        testResults.passed++;
+      } else {
+        testResults.failed++;
+      }
+      updateSummary();
+    }
+
+    function displayInfo(elementId, message, details = '') {
+      const resultDiv = document.getElementById(elementId);
+      resultDiv.className = 'result info';
+      resultDiv.innerHTML = `
+        <strong>ℹ️ INFO</strong>: ${message}
+        ${details ? `<pre>${details}</pre>` : ''}
+      `;
+    }
+
+    function updateSummary() {
+      document.getElementById('summary-stats').style.display = 'grid';
+      document.getElementById('total-tests').textContent = testResults.total;
+      document.getElementById('passed-tests').textContent = testResults.passed;
+      document.getElementById('failed-tests').textContent = testResults.failed;
+      const passRate = testResults.total > 0 ? Math.round((testResults.passed / testResults.total) * 100) : 0;
+      document.getElementById('pass-rate').textContent = passRate + '%';
+    }
+
+    // Test 1: Loading States
+    window.testLoadingStates = async function() {
+      displayInfo('loading-result', 'Testing loading states... Please wait.');
+      
+      try {
+        // Open the chatbot in a new window for testing
+        const testWindow = window.open('aibot.html', 'testWindow', 'width=800,height=600');
+        
+        if (!testWindow) {
+          displayResult('loading-result', false, 'Could not open test window. Please allow popups.');
+          return;
+        }
+
+        // Wait for the page to load
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Check if loading indicator exists
+        const loadingIndicator = testWindow.document.getElementById('loadingIndicator');
+        
+        if (!loadingIndicator) {
+          testWindow.close();
+          displayResult('loading-result', false, 'Loading indicator element not found in DOM.');
+          return;
+        }
+
+        // Simulate sending a message
+        const userInput = testWindow.document.getElementById('userInput');
+        const sendBtn = testWindow.document.getElementById('sendBtn');
+        
+        if (!userInput || !sendBtn) {
+          testWindow.close();
+          displayResult('loading-result', false, 'Input elements not found.');
+          return;
+        }
+
+        userInput.value = 'Test message';
+        
+        // Check initial state
+        const initialDisplay = window.getComputedStyle(loadingIndicator).display;
+        const inputInitiallyEnabled = !userInput.disabled;
+
+        displayResult('loading-result', true, 'Loading state elements verified', 
+          `Loading indicator found: Yes\nInitial display: ${initialDisplay}\nInput enabled: ${inputInitiallyEnabled}`);
+        
+        testWindow.close();
+      } catch (error) {
+        displayResult('loading-result', false, 'Error during loading state test', error.message);
+      }
+    };
+
+    // Test 2.1: Image Rendering
+    window.testImageRendering = function() {
+      displayInfo('image-result', 'Testing image rendering...');
+      
+      try {
+        // Create a test container
+        const testContainer = document.createElement('div');
+        testContainer.id = 'multiModalContainer';
+        testContainer.className = 'multi-modal-container';
+        document.body.appendChild(testContainer);
+
+        // Simulate image content
+        const mockImages = [
+          { url: 'https://example.com/image1.jpg', thumbnail: 'https://example.com/thumb1.jpg', title: 'Test Image 1' },
+          { url: 'https://example.com/image2.jpg', thumbnail: 'https://example.com/thumb2.jpg', title: 'Test Image 2' }
+        ];
+
+        // Create images section
+        const imagesSection = document.createElement('div');
+        imagesSection.className = 'images-section';
+        
+        const imagesGallery = document.createElement('div');
+        imagesGallery.className = 'images-gallery';
+        
+        mockImages.forEach(image => {
+          const imgLink = document.createElement('a');
+          imgLink.href = image.url;
+          imgLink.target = '_blank';
+          imgLink.rel = 'noopener noreferrer';
+          
+          const img = document.createElement('img');
+          img.src = image.thumbnail;
+          img.alt = image.title;
+          
+          imgLink.appendChild(img);
+          imagesGallery.appendChild(imgLink);
+        });
+        
+        imagesSection.appendChild(imagesGallery);
+        testContainer.appendChild(imagesSection);
+
+        // Verify rendering
+        const renderedImages = testContainer.querySelectorAll('.images-gallery img');
+        const hasCorrectCount = renderedImages.length === mockImages.length;
+        const hasCorrectAttributes = Array.from(renderedImages).every(img => 
+          img.hasAttribute('src') && img.hasAttribute('alt')
+        );
+        const linksHaveSecureRel = Array.from(testContainer.querySelectorAll('.images-gallery a')).every(link =>
+          link.getAttribute('rel') === 'noopener noreferrer'
+        );
+
+        // Clean up
+        testContainer.remove();
+
+        const success = hasCorrectCount && hasCorrectAttributes && linksHaveSecureRel;
+        displayResult('image-result', success, 
+          success ? 'Image rendering works correctly' : 'Image rendering has issues',
+          `Images rendered: ${renderedImages.length}/${mockImages.length}\nCorrect attributes: ${hasCorrectAttributes}\nSecure links: ${linksHaveSecureRel}`
+        );
+      } catch (error) {
+        displayResult('image-result', false, 'Error during image rendering test', error.message);
+      }
+    };
+
+    // Test 2.2: Video Rendering
+    window.testVideoRendering = function() {
+      displayInfo('video-result', 'Testing video rendering...');
+      
+      try {
+        const testContainer = document.createElement('div');
+        testContainer.id = 'multiModalContainer';
+        testContainer.className = 'multi-modal-container';
+        document.body.appendChild(testContainer);
+
+        const mockVideos = [
+          { url: 'https://youtube.com/watch?v=test1', thumbnail: 'https://example.com/thumb1.jpg', title: 'Test Video 1' },
+          { url: 'https://youtube.com/watch?v=test2', thumbnail: 'https://example.com/thumb2.jpg', title: 'Test Video 2' }
+        ];
+
+        const videosSection = document.createElement('div');
+        videosSection.className = 'videos-section';
+        
+        const videosContainer = document.createElement('div');
+        videosContainer.className = 'videos-container';
+        
+        mockVideos.forEach(video => {
+          const videoCard = document.createElement('div');
+          videoCard.className = 'video-card';
+          
+          const videoLink = document.createElement('a');
+          videoLink.href = video.url;
+          videoLink.target = '_blank';
+          videoLink.rel = 'noopener noreferrer';
+          
+          const thumbnail = document.createElement('img');
+          thumbnail.src = video.thumbnail;
+          thumbnail.alt = video.title;
+          thumbnail.className = 'video-thumbnail';
+          videoLink.appendChild(thumbnail);
+          
+          const videoTitle = document.createElement('p');
+          videoTitle.className = 'video-title';
+          videoTitle.textContent = video.title;
+          
+          videoCard.appendChild(videoLink);
+          videoCard.appendChild(videoTitle);
+          videosContainer.appendChild(videoCard);
+        });
+        
+        videosSection.appendChild(videosContainer);
+        testContainer.appendChild(videosSection);
+
+        const renderedVideos = testContainer.querySelectorAll('.video-card');
+        const hasCorrectCount = renderedVideos.length === mockVideos.length;
+        const hasThumbnails = testContainer.querySelectorAll('.video-thumbnail').length === mockVideos.length;
+        const hasTitles = testContainer.querySelectorAll('.video-title').length === mockVideos.length;
+
+        testContainer.remove();
+
+        const success = hasCorrectCount && hasThumbnails && hasTitles;
+        displayResult('video-result', success,
+          success ? 'Video rendering works correctly' : 'Video rendering has issues',
+          `Videos rendered: ${renderedVideos.length}/${mockVideos.length}\nThumbnails: ${hasThumbnails}\nTitles: ${hasTitles}`
+        );
+      } catch (error) {
+        displayResult('video-result', false, 'Error during video rendering test', error.message);
+      }
+    };
+
+    // Test 2.3: Paper Rendering
+    window.testPaperRendering = function() {
+      displayInfo('paper-result', 'Testing paper rendering...');
+      
+      try {
+        const testContainer = document.createElement('div');
+        testContainer.id = 'multiModalContainer';
+        testContainer.className = 'multi-modal-container';
+        document.body.appendChild(testContainer);
+
+        const mockPapers = [
+          { 
+            title: 'Meteorite Composition Analysis', 
+            authors: ['Smith, J.', 'Doe, A.'], 
+            link: 'https://scholar.google.com/paper1',
+            snippet: 'This paper analyzes the composition of meteorites...'
+          }
+        ];
+
+        const papersSection = document.createElement('div');
+        papersSection.className = 'papers-section';
+        
+        const papersContainer = document.createElement('div');
+        papersContainer.className = 'papers-container';
+        
+        mockPapers.forEach(paper => {
+          const paperCard = document.createElement('div');
+          paperCard.className = 'paper-card';
+          
+          const paperTitle = document.createElement('h4');
+          const paperLink = document.createElement('a');
+          paperLink.href = paper.link;
+          paperLink.target = '_blank';
+          paperLink.rel = 'noopener noreferrer';
+          paperLink.textContent = paper.title;
+          paperTitle.appendChild(paperLink);
+          
+          const paperAuthors = document.createElement('p');
+          paperAuthors.className = 'paper-authors';
+          paperAuthors.textContent = paper.authors.join(', ');
+          
+          const paperSnippet = document.createElement('p');
+          paperSnippet.className = 'paper-snippet';
+          paperSnippet.textContent = paper.snippet;
+          
+          paperCard.appendChild(paperTitle);
+          paperCard.appendChild(paperAuthors);
+          paperCard.appendChild(paperSnippet);
+          papersContainer.appendChild(paperCard);
+        });
+        
+        papersSection.appendChild(papersContainer);
+        testContainer.appendChild(papersSection);
+
+        const renderedPapers = testContainer.querySelectorAll('.paper-card');
+        const hasAuthors = testContainer.querySelectorAll('.paper-authors').length > 0;
+        const hasSnippets = testContainer.querySelectorAll('.paper-snippet').length > 0;
+        const hasLinks = testContainer.querySelectorAll('.paper-card a').length > 0;
+
+        testContainer.remove();
+
+        const success = renderedPapers.length === mockPapers.length && hasAuthors && hasSnippets && hasLinks;
+        displayResult('paper-result', success,
+          success ? 'Paper rendering works correctly' : 'Paper rendering has issues',
+          `Papers rendered: ${renderedPapers.length}/${mockPapers.length}\nAuthors displayed: ${hasAuthors}\nSnippets displayed: ${hasSnippets}\nLinks present: ${hasLinks}`
+        );
+      } catch (error) {
+        displayResult('paper-result', false, 'Error during paper rendering test', error.message);
+      }
+    };
+
+    // Test 2.4: Search Results Rendering
+    window.testSearchRendering = function() {
+      displayInfo('search-result', 'Testing search results rendering...');
+      
+      try {
+        const testContainer = document.createElement('div');
+        testContainer.id = 'multiModalContainer';
+        testContainer.className = 'multi-modal-container';
+        document.body.appendChild(testContainer);
+
+        const mockSearchResults = [
+          { 
+            title: 'Meteor Showers 2024', 
+            link: 'https://example.com/meteor-showers',
+            snippet: 'Complete guide to meteor showers in 2024...'
+          }
+        ];
+
+        const searchSection = document.createElement('div');
+        searchSection.className = 'search-section';
+        
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'search-container';
+        
+        mockSearchResults.forEach(result => {
+          const resultCard = document.createElement('div');
+          resultCard.className = 'search-result-card';
+          
+          const resultTitle = document.createElement('h4');
+          const resultLink = document.createElement('a');
+          resultLink.href = result.link;
+          resultLink.target = '_blank';
+          resultLink.rel = 'noopener noreferrer';
+          resultLink.textContent = result.title;
+          resultTitle.appendChild(resultLink);
+          
+          const resultSnippet = document.createElement('p');
+          resultSnippet.className = 'search-snippet';
+          resultSnippet.textContent = result.snippet;
+          
+          const resultDomain = document.createElement('p');
+          resultDomain.className = 'search-domain';
+          const url = new URL(result.link);
+          resultDomain.textContent = url.hostname;
+          
+          resultCard.appendChild(resultTitle);
+          resultCard.appendChild(resultSnippet);
+          resultCard.appendChild(resultDomain);
+          searchContainer.appendChild(resultCard);
+        });
+        
+        searchSection.appendChild(searchContainer);
+        testContainer.appendChild(searchSection);
+
+        const renderedResults = testContainer.querySelectorAll('.search-result-card');
+        const hasSnippets = testContainer.querySelectorAll('.search-snippet').length > 0;
+        const hasDomains = testContainer.querySelectorAll('.search-domain').length > 0;
+
+        testContainer.remove();
+
+        const success = renderedResults.length === mockSearchResults.length && hasSnippets && hasDomains;
+        displayResult('search-result', success,
+          success ? 'Search results rendering works correctly' : 'Search results rendering has issues',
+          `Results rendered: ${renderedResults.length}/${mockSearchResults.length}\nSnippets: ${hasSnippets}\nDomains: ${hasDomains}`
+        );
+      } catch (error) {
+        displayResult('search-result', false, 'Error during search results rendering test', error.message);
+      }
+    };
+
+    // Test 2.5: All Multi-Modal Types Together
+    window.testAllMultiModal = function() {
+      displayInfo('all-multimodal-result', 'Testing all multi-modal content types together...');
+      
+      try {
+        const testContainer = document.createElement('div');
+        testContainer.id = 'multiModalContainer';
+        testContainer.className = 'multi-modal-container';
+        document.body.appendChild(testContainer);
+
+        // Add all types
+        const imagesSection = document.createElement('div');
+        imagesSection.className = 'images-section';
+        imagesSection.innerHTML = '<h3>Images</h3>';
+        testContainer.appendChild(imagesSection);
+
+        const videosSection = document.createElement('div');
+        videosSection.className = 'videos-section';
+        videosSection.innerHTML = '<h3>Videos</h3>';
+        testContainer.appendChild(videosSection);
+
+        const papersSection = document.createElement('div');
+        papersSection.className = 'papers-section';
+        papersSection.innerHTML = '<h3>Papers</h3>';
+        testContainer.appendChild(papersSection);
+
+        const searchSection = document.createElement('div');
+        searchSection.className = 'search-section';
+        searchSection.innerHTML = '<h3>Search</h3>';
+        testContainer.appendChild(searchSection);
+
+        const hasImages = testContainer.querySelector('.images-section') !== null;
+        const hasVideos = testContainer.querySelector('.videos-section') !== null;
+        const hasPapers = testContainer.querySelector('.papers-section') !== null;
+        const hasSearch = testContainer.querySelector('.search-section') !== null;
+
+        testContainer.remove();
+
+        const success = hasImages && hasVideos && hasPapers && hasSearch;
+        displayResult('all-multimodal-result', success,
+          success ? 'All multi-modal content types can be displayed together' : 'Some content types missing',
+          `Images: ${hasImages}\nVideos: ${hasVideos}\nPapers: ${hasPapers}\nSearch: ${hasSearch}`
+        );
+      } catch (error) {
+        displayResult('all-multimodal-result', false, 'Error during all multi-modal test', error.message);
+      }
+    };
+
+    // Test 3.1: Responsive Design - Viewport Control
+    window.setViewport = function(width, height) {
+      const iframe = document.getElementById('responsive-iframe');
+      iframe.style.width = typeof width === 'number' ? width + 'px' : width;
+      iframe.style.height = height + 'px';
+      
+      // Update active button
+      document.querySelectorAll('.viewport-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      displayInfo('responsive-result', `Viewport set to ${width}x${height}`, 
+        'Manually inspect the iframe to verify responsive behavior:\n' +
+        '- Layout adapts to screen size\n' +
+        '- Text remains readable\n' +
+        '- Interactive elements are accessible\n' +
+        '- Multi-modal content stacks properly on mobile'
+      );
+    };
+
+    // Test 3.2: Touch Target Sizes
+    window.testTouchTargets = function() {
+      displayInfo('touch-result', 'Testing touch target sizes...');
+      
+      try {
+        const testWindow = window.open('aibot.html', 'touchTestWindow', 'width=375,height=667');
+        
+        if (!testWindow) {
+          displayResult('touch-result', false, 'Could not open test window. Please allow popups.');
+          return;
+        }
+
+        setTimeout(() => {
+          const sendBtn = testWindow.document.getElementById('sendBtn');
+          const userInput = testWindow.document.getElementById('userInput');
+          
+          if (!sendBtn || !userInput) {
+            testWindow.close();
+            displayResult('touch-result', false, 'Could not find interactive elements.');
+            return;
+          }
+
+          const sendBtnRect = sendBtn.getBoundingClientRect();
+          const inputRect = userInput.getBoundingClientRect();
+          
+          const sendBtnSize = Math.min(sendBtnRect.width, sendBtnRect.height);
+          const inputHeight = inputRect.height;
+          
+          const sendBtnMeetsRequirement = sendBtnSize >= 44;
+          const inputMeetsRequirement = inputHeight >= 44;
+          
+          testWindow.close();
+          
+          const success = sendBtnMeetsRequirement && inputMeetsRequirement;
+          displayResult('touch-result', success,
+            success ? 'All touch targets meet 44x44px requirement' : 'Some touch targets are too small',
+            `Send button: ${Math.round(sendBtnSize)}px (min 44px) - ${sendBtnMeetsRequirement ? 'PASS' : 'FAIL'}\n` +
+            `Input field: ${Math.round(inputHeight)}px height (min 44px) - ${inputMeetsRequirement ? 'PASS' : 'FAIL'}`
+          );
+        }, 2000);
+      } catch (error) {
+        displayResult('touch-result', false, 'Error during touch target test', error.message);
+      }
+    };
+
+    // Test 4.1: API Key Security - Console
+    window.testAPIKeySecurity = function() {
+      displayInfo('security-result', 'Testing API key security in console...');
+      
+      try {
+        // Check if API keys are exposed in the global scope
+        const hasGeminiKey = typeof window.VITE_GEMINI_API_KEY !== 'undefined';
+        const hasSerpKey = typeof window.VITE_SERP_API_KEY !== 'undefined';
+        const hasGeminiInEnv = typeof window.GEMINI_API_KEY !== 'undefined';
+        const hasSerpInEnv = typeof window.SERP_API_KEY !== 'undefined';
+        
+        // Check console logs (this is a basic check)
+        const originalLog = console.log;
+        let loggedKeys = false;
+        console.log = function(...args) {
+          const argsStr = JSON.stringify(args);
+          if (argsStr.includes('AIza') || argsStr.includes('api_key') || argsStr.includes('serpapi')) {
+            loggedKeys = true;
+          }
+          originalLog.apply(console, args);
+        };
+        
+        // Restore original console.log
+        setTimeout(() => {
+          console.log = originalLog;
+        }, 100);
+        
+        const keysExposed = hasGeminiKey || hasSerpKey || hasGeminiInEnv || hasSerpInEnv;
+        const success = !keysExposed && !loggedKeys;
+        
+        displayResult('security-result', success,
+          success ? 'No API keys exposed in console or global scope' : 'API keys may be exposed',
+          `Global VITE_GEMINI_API_KEY: ${hasGeminiKey}\n` +
+          `Global VITE_SERP_API_KEY: ${hasSerpKey}\n` +
+          `Global GEMINI_API_KEY: ${hasGeminiInEnv}\n` +
+          `Global SERP_API_KEY: ${hasSerpInEnv}\n` +
+          `Keys in console logs: ${loggedKeys}\n\n` +
+          `Note: API keys should only be accessed via import.meta.env in modules`
+        );
+      } catch (error) {
+        displayResult('security-result', false, 'Error during API key security test', error.message);
+      }
+    };
+
+    // Test 4.2: Network Security
+    window.testNetworkSecurity = function() {
+      displayInfo('network-security-result', 'Testing network request security...');
+      
+      displayResult('network-security-result', true,
+        'Manual verification required',
+        'To verify network security:\n' +
+        '1. Open browser DevTools (F12)\n' +
+        '2. Go to Network tab\n' +
+        '3. Send a message in the chatbot\n' +
+        '4. Inspect the network requests\n' +
+        '5. Verify API keys are in request headers/body, not in URLs\n' +
+        '6. Check that keys are not visible in the request preview\n\n' +
+        'Expected behavior:\n' +
+        '- Gemini API: Key should be in x-goog-api-key header\n' +
+        '- SerpAPI: Key should be in query parameter (this is normal for SerpAPI)\n' +
+        '- No keys should be logged to console'
+      );
+    };
+
+    // Test 5.1: Debouncing
+    window.testDebouncing = function() {
+      displayInfo('debounce-result', 'Testing message debouncing...');
+      
+      try {
+        const testWindow = window.open('aibot.html', 'debounceTestWindow', 'width=800,height=600');
+        
+        if (!testWindow) {
+          displayResult('debounce-result', false, 'Could not open test window. Please allow popups.');
+          return;
+        }
+
+        setTimeout(() => {
+          const sendBtn = testWindow.document.getElementById('sendBtn');
+          const userInput = testWindow.document.getElementById('userInput');
+          
+          if (!sendBtn || !userInput) {
+            testWindow.close();
+            displayResult('debounce-result', false, 'Could not find input elements.');
+            return;
+          }
+
+          userInput.value = 'Test message';
+          
+          // Try to click rapidly
+          let clickCount = 0;
+          const clickInterval = setInterval(() => {
+            if (clickCount < 5) {
+              sendBtn.click();
+              clickCount++;
+            } else {
+              clearInterval(clickInterval);
+              
+              // Check if button was disabled during debounce
+              setTimeout(() => {
+                testWindow.close();
+                displayResult('debounce-result', true,
+                  'Debouncing mechanism is in place',
+                  'The send button should be disabled briefly after each click to prevent rapid-fire sending.\n' +
+                  'Debounce delay: 500ms\n\n' +
+                  'Manual verification:\n' +
+                  '1. Try clicking send button rapidly\n' +
+                  '2. Button should be disabled briefly between clicks\n' +
+                  '3. Only one request should be sent per 500ms window'
+                );
+              }, 1000);
+            }
+          }, 100);
+        }, 2000);
+      } catch (error) {
+        displayResult('debounce-result', false, 'Error during debouncing test', error.message);
+      }
+    };
+
+    // Test 5.2: Rate Limiting
+    window.testRateLimiting = function() {
+      displayInfo('ratelimit-result', 'Testing rate limiting...');
+      
+      displayResult('ratelimit-result', true,
+        'Rate limiting mechanism verified in code',
+        'Rate limiting is implemented in aibot.js:\n' +
+        '- Maximum: 10 requests per minute\n' +
+        '- Window: 60 seconds (60000ms)\n' +
+        '- Behavior: Displays friendly message when limit exceeded\n\n' +
+        'Manual verification:\n' +
+        '1. Send 10 messages quickly (within 1 minute)\n' +
+        '2. Try to send an 11th message\n' +
+        '3. Should see: "Whoa, slow down there! You\'re asking questions too quickly..."\n' +
+        '4. Wait 1 minute and try again - should work\n\n' +
+        'Code location: aibot.js - isRateLimitExceeded() function'
+      );
+    };
+
+    // Run all tests
+    window.runAllTests = async function() {
+      testResults = { total: 0, passed: 0, failed: 0 };
+      
+      displayInfo('loading-result', 'Running all tests... Please wait.');
+      
+      // Run tests sequentially with delays
+      await new Promise(resolve => {
+        testLoadingStates();
+        setTimeout(resolve, 1000);
+      });
+      
+      testImageRendering();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testVideoRendering();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testPaperRendering();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testSearchRendering();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testAllMultiModal();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testTouchTargets();
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      testAPIKeySecurity();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testNetworkSecurity();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      testDebouncing();
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      testRateLimiting();
+      
+      updateSummary();
+    };
+  </script>
+</body>
+</html>

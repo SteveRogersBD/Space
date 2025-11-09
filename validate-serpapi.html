@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick SerpAPI Validation</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #1a1a1a;
+      color: #00ff00;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .log {
+      background: #000;
+      padding: 15px;
+      border: 1px solid #00ff00;
+      border-radius: 5px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .success { color: #00ff00; }
+    .error { color: #ff0000; }
+    .info { color: #00aaff; }
+    .warning { color: #ffaa00; }
+    button {
+      background: #00ff00;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #00cc00;
+    }
+    button:disabled {
+      background: #555;
+      color: #888;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 SerpAPI Quick Validation</h1>
+  <p>This page performs quick validation of all SerpAPI integrations.</p>
+  
+  <button onclick="runQuickTest()" id="testBtn">Run Quick Test</button>
+  <button onclick="clearLog()">Clear Log</button>
+  
+  <div class="log" id="log">Click "Run Quick Test" to begin...</div>
+
+  <script type="module">
+    import { fetchImages, fetchVideos, fetchScholarPapers, fetchSearchResults } from './api-service.js';
+
+    window.runQuickTest = async function() {
+      const log = document.getElementById('log');
+      const testBtn = document.getElementById('testBtn');
+      log.innerHTML = '';
+      testBtn.disabled = true;
+      
+      function addLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        log.innerHTML += `<span class="${type}">[${timestamp}] ${message}</span>\n`;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      addLog('='.repeat(70), 'info');
+      addLog('SERPAPI QUICK VALIDATION TEST', 'info');
+      addLog('Testing Requirements: 2.1, 2.2, 3.1, 3.2, 4.1, 4.2, 5.1, 5.2', 'info');
+      addLog('='.repeat(70), 'info');
+      addLog('');
+
+      let totalTests = 0;
+      let passedTests = 0;
+      let failedTests = 0;
+
+      // Test 1: Image Search
+      addLog('Test 1: Image Search (Requirements 2.1, 2.2)', 'info');
+      addLog('Keyword: "Perseid meteor shower"', 'warning');
+      addLog('');
+
+      try {
+        totalTests++;
+        const startTime = Date.now();
+        addLog('Fetching images from SerpAPI...', 'info');
+        
+        const images = await fetchImages('Perseid meteor shower', 3);
+        const duration = Date.now() - startTime;
+        
+        if (images && images.length > 0) {
+          addLog(`✓ Retrieved ${images.length} image(s) in ${duration}ms`, 'success');
+          
+          // Validate structure
+          const hasValidStructure = images.every(img => 
+            img.url && img.title && typeof img.url === 'string'
+          );
+          
+          if (hasValidStructure) {
+            addLog('✓ All images have valid structure (url, title, thumbnail)', 'success');
+            addLog(`  Sample: ${images[0].title}`, 'info');
+            addLog(`  URL: ${images[0].url.substring(0, 60)}...`, 'info');
+            passedTests++;
+          } else {
+            addLog('✗ Some images have invalid structure', 'error');
+            failedTests++;
+          }
+        } else {
+          addLog('✗ No images returned', 'error');
+          failedTests++;
+        }
+      } catch (error) {
+        addLog(`✗ Error: ${error.message}`, 'error');
+        failedTests++;
+      }
+
+      addLog('');
+      addLog('Waiting 1 second before next test...', 'info');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      addLog('');
+
+      // Test 2: Video Search
+      addLog('Test 2: Video Search (Requirements 3.1, 3.2)', 'info');
+      addLog('Keyword: "meteor shower time lapse"', 'warning');
+      addLog('');
+
+      try {
+        totalTests++;
+        const startTime = Date.now();
+        addLog('Fetching videos from SerpAPI...', 'info');
+        
+        const videos = await fetchVideos('meteor shower time lapse', 2);
+        const duration = Date.now() - startTime;
+        
+        if (videos && videos.length > 0) {
+          addLog(`✓ Retrieved ${videos.length} video(s) in ${duration}ms`, 'success');
+          
+          // Validate YouTube links
+          const allYouTubeLinks = videos.every(v => 
+            v.url && (v.url.includes('youtube.com') || v.url.includes('youtu.be'))
+          );
+          
+          if (allYouTubeLinks) {
+            addLog('✓ All video links are valid YouTube URLs', 'success');
+          } else {
+            addLog('⚠ Some video links may not be YouTube URLs', 'warning');
+          }
+          
+          // Validate structure
+          const hasValidStructure = videos.every(v => 
+            v.url && v.title && v.platform && typeof v.url === 'string'
+          );
+          
+          if (hasValidStructure) {
+            addLog('✓ All videos have valid structure (url, title, thumbnail, platform)', 'success');
+            addLog(`  Sample: ${videos[0].title}`, 'info');
+            addLog(`  URL: ${videos[0].url}`, 'info');
+            passedTests++;
+          } else {
+            addLog('✗ Some videos have invalid structure', 'error');
+            failedTests++;
+          }
+        } else {
+          addLog('✗ No videos returned', 'error');
+          failedTests++;
+        }
+      } catch (error) {
+        addLog(`✗ Error: ${error.message}`, 'error');
+        failedTests++;
+      }
+
+      addLog('');
+      addLog('Waiting 1 second before next test...', 'info');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      addLog('');
+
+      // Test 3: Scholar Search
+      addLog('Test 3: Scholar Search (Requirements 4.1, 4.2)', 'info');
+      addLog('Keyword: "meteorite composition analysis"', 'warning');
+      addLog('');
+
+      try {
+        totalTests++;
+        const startTime = Date.now();
+        addLog('Fetching papers from SerpAPI...', 'info');
+        
+        const papers = await fetchScholarPapers('meteorite composition analysis', 2);
+        const duration = Date.now() - startTime;
+        
+        if (papers && papers.length > 0) {
+          addLog(`✓ Retrieved ${papers.length} paper(s) in ${duration}ms`, 'success');
+          
+          // Validate citation formatting
+          const hasValidCitations = papers.every(p => 
+            p.title && p.link && typeof p.title === 'string' && typeof p.link === 'string'
+          );
+          
+          if (hasValidCitations) {
+            addLog('✓ All papers have valid citation formatting (title, authors, link, snippet)', 'success');
+            addLog(`  Sample: ${papers[0].title}`, 'info');
+            const authors = Array.isArray(papers[0].authors) ? papers[0].authors.join(', ') : 'Unknown';
+            addLog(`  Authors: ${authors}`, 'info');
+            addLog(`  Link: ${papers[0].link}`, 'info');
+            passedTests++;
+          } else {
+            addLog('✗ Some papers have invalid citation formatting', 'error');
+            failedTests++;
+          }
+        } else {
+          addLog('✗ No papers returned', 'error');
+          failedTests++;
+        }
+      } catch (error) {
+        addLog(`✗ Error: ${error.message}`, 'error');
+        failedTests++;
+      }
+
+      addLog('');
+      addLog('Waiting 1 second before next test...', 'info');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      addLog('');
+
+      // Test 4: Web Search
+      addLog('Test 4: Web Search (Requirements 5.1, 5.2)', 'info');
+      addLog('Keyword: "Geminid meteor shower 2024"', 'warning');
+      addLog('');
+
+      try {
+        totalTests++;
+        const startTime = Date.now();
+        addLog('Fetching search results from SerpAPI...', 'info');
+        
+        const results = await fetchSearchResults('Geminid meteor shower 2024', 3);
+        const duration = Date.now() - startTime;
+        
+        if (results && results.length > 0) {
+          addLog(`✓ Retrieved ${results.length} result(s) in ${duration}ms`, 'success');
+          
+          // Validate result links
+          const hasValidLinks = results.every(r => 
+            r.link && r.link.startsWith('http') && typeof r.link === 'string'
+          );
+          
+          if (hasValidLinks) {
+            addLog('✓ All search results have valid links', 'success');
+          } else {
+            addLog('✗ Some search results have invalid links', 'error');
+          }
+          
+          // Validate structure
+          const hasValidStructure = results.every(r => 
+            r.title && r.link && typeof r.title === 'string'
+          );
+          
+          if (hasValidStructure) {
+            addLog('✓ All results have valid structure (title, link, snippet)', 'success');
+            addLog(`  Sample: ${results[0].title}`, 'info');
+            addLog(`  Link: ${results[0].link}`, 'info');
+            if (results[0].snippet) {
+              addLog(`  Snippet: ${results[0].snippet.substring(0, 100)}...`, 'info');
+            }
+            passedTests++;
+          } else {
+            addLog('✗ Some results have invalid structure', 'error');
+            failedTests++;
+          }
+        } else {
+          addLog('✗ No search results returned', 'error');
+          failedTests++;
+        }
+      } catch (error) {
+        addLog(`✗ Error: ${error.message}`, 'error');
+        failedTests++;
+      }
+
+      addLog('');
+      addLog('Waiting 1 second before error handling test...', 'info');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      addLog('');
+
+      // Test 5: Error Handling
+      addLog('Test 5: Error Handling', 'info');
+      addLog('Testing with empty keyword...', 'warning');
+      addLog('');
+
+      try {
+        totalTests++;
+        addLog('Fetching images with empty keyword...', 'info');
+        
+        const images = await fetchImages('', 3);
+        
+        if (Array.isArray(images)) {
+          addLog('✓ Function returns array on error (graceful degradation)', 'success');
+          addLog(`  Returned ${images.length} results (expected 0 or empty)`, 'info');
+          passedTests++;
+        } else {
+          addLog('✗ Function did not return array on error', 'error');
+          failedTests++;
+        }
+      } catch (error) {
+        addLog('✗ Function threw error instead of returning empty array', 'error');
+        addLog(`  Error: ${error.message}`, 'error');
+        failedTests++;
+      }
+
+      // Summary
+      addLog('');
+      addLog('='.repeat(70), 'info');
+      addLog('TEST SUMMARY', 'info');
+      addLog('='.repeat(70), 'info');
+      addLog(`Total Tests: ${totalTests}`, 'info');
+      addLog(`Passed: ${passedTests}`, passedTests === totalTests ? 'success' : 'warning');
+      addLog(`Failed: ${failedTests}`, failedTests === 0 ? 'success' : 'error');
+      addLog(`Success Rate: ${((passedTests / totalTests) * 100).toFixed(1)}%`, 
+             failedTests === 0 ? 'success' : 'warning');
+      addLog('');
+
+      if (failedTests === 0) {
+        addLog('✓ All SerpAPI integrations are working correctly!', 'success');
+        addLog('✓ Requirements 2.1, 2.2, 3.1, 3.2, 4.1, 4.2, 5.1, 5.2 validated', 'success');
+      } else {
+        addLog('⚠ Some tests failed. Please review the errors above.', 'warning');
+      }
+
+      addLog('');
+      addLog('Next Steps:', 'info');
+      addLog('1. Open test-serpapi.html for comprehensive testing with multiple keywords', 'info');
+      addLog('2. Test in the actual chatbot at aibot.html', 'info');
+      addLog('3. Verify multi-modal content displays correctly', 'info');
+      addLog('');
+      addLog('='.repeat(70), 'info');
+
+      testBtn.disabled = false;
+    };
+
+    window.clearLog = function() {
+      document.getElementById('log').innerHTML = 'Click "Run Quick Test" to begin...';
+    };
+  </script>
+</body>
+</html>

@@ -108,11 +108,12 @@ body {
 
 .thought-bubble {
   position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  max-width: 450px;
-  min-width: 350px;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 600px;
+  min-width: 500px;
+  margin-left: 40px;
   opacity: 0;
   animation: bubbleAppear 0.6s ease-out 1.2s forwards;
   z-index: 20;
@@ -121,11 +122,11 @@ body {
 @keyframes bubbleAppear {
   0% {
     opacity: 0;
-    transform: translateX(-50%) scale(0.8) translateY(20px);
+    transform: translateY(-50%) scale(0.8) translateX(-20px);
   }
   100% {
     opacity: 1;
-    transform: translateX(-50%) scale(1) translateY(0);
+    transform: translateY(-50%) scale(1) translateX(0);
   }
 }
 
@@ -133,45 +134,49 @@ body {
   background: rgba(0, 212, 255, 0.2);
   border: 3px solid rgba(0, 212, 255, 0.6);
   border-radius: 30px;
-  padding: 1.8rem 2.2rem;
+  padding: 2.5rem 3rem;
+  min-height: 200px;
   box-shadow: 0 0 40px rgba(0, 212, 255, 0.4),
               inset 0 0 30px rgba(0, 212, 255, 0.1);
   backdrop-filter: blur(10px);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bubble-content p {
   color: #fff;
-  font-size: 1.15rem;
-  line-height: 1.7;
+  font-size: 1.3rem;
+  line-height: 1.8;
   margin: 0;
-  text-align: center;
+  text-align: left;
   text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
 }
 
 .bubble-tail {
   position: absolute;
-  bottom: -25px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: -25px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 0;
   height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 30px solid rgba(0, 212, 255, 0.6);
-  filter: drop-shadow(0 5px 10px rgba(0, 212, 255, 0.3));
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-right: 30px solid rgba(0, 212, 255, 0.6);
+  filter: drop-shadow(-5px 0 10px rgba(0, 212, 255, 0.3));
 }
 
 .bubble-tail::before {
   content: '';
   position: absolute;
-  top: -33px;
-  left: -17px;
+  left: 3px;
+  top: -17px;
   width: 0;
   height: 0;
-  border-left: 17px solid transparent;
-  border-right: 17px solid transparent;
-  border-top: 27px solid rgba(0, 212, 255, 0.2);
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-right: 27px solid rgba(0, 212, 255, 0.2);
 }
 
 .input-bar-container {
@@ -304,24 +309,27 @@ body {
   }
 
   .thought-bubble {
-    max-width: 280px;
-    min-width: 250px;
-    top: 0;
+    max-width: 320px;
+    min-width: 280px;
+    left: 100%;
+    top: 50%;
+    margin-left: 20px;
   }
 
   .bubble-content {
-    padding: 1.2rem 1.5rem;
+    padding: 1.5rem 1.8rem;
+    min-height: 150px;
   }
 
   .bubble-content p {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .bubble-tail {
-    bottom: -20px;
-    border-left-width: 15px;
-    border-right-width: 15px;
-    border-top-width: 25px;
+    left: -20px;
+    border-top-width: 15px;
+    border-bottom-width: 15px;
+    border-right-width: 25px;
   }
 
   .user-messages-container {

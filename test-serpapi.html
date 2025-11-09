@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SerpAPI Integration Tests</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e0e0e0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #64b5f6;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+
+    .subtitle {
+      color: #90caf9;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(100, 181, 246, 0.3);
+    }
+
+    button {
+      background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
+    }
+
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .test-results {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(100, 181, 246, 0.3);
+    }
+
+    .test-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #64b5f6;
+    }
+
+    .test-item.running {
+      border-left-color: #ffa726;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .test-item.passed {
+      border-left-color: #66bb6a;
+    }
+
+    .test-item.failed {
+      border-left-color: #ef5350;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .test-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #90caf9;
+    }
+
+    .test-status {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background: #555;
+      color: #aaa;
+    }
+
+    .status-running {
+      background: #ff9800;
+      color: white;
+    }
+
+    .status-passed {
+      background: #4caf50;
+      color: white;
+    }
+
+    .status-failed {
+      background: #f44336;
+      color: white;
+    }
+
+    .test-keyword {
+      color: #ffd54f;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .test-details {
+      font-size: 0.9em;
+      color: #b0b0b0;
+      margin-top: 10px;
+    }
+
+    .result-item {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 8px;
+      border-left: 2px solid #64b5f6;
+    }
+
+    .result-item img {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+
+    .result-item a {
+      color: #64b5f6;
+      text-decoration: none;
+    }
+
+    .result-item a:hover {
+      text-decoration: underline;
+    }
+
+    .result-title {
+      font-weight: bold;
+      color: #90caf9;
+      margin-bottom: 5px;
+    }
+
+    .result-meta {
+      font-size: 0.85em;
+      color: #b0b0b0;
+    }
+
+    .summary {
+      background: rgba(100, 181, 246, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      border: 2px solid #64b5f6;
+    }
+
+    .summary h2 {
+      color: #64b5f6;
+      margin-bottom: 15px;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: #b0b0b0;
+    }
+
+    .error-message {
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid #ef5350;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      color: #ffcdd2;
+    }
+
+    .success-message {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid #66bb6a;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      color: #c8e6c9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 SerpAPI Integration Test Suite</h1>
+    <p class="subtitle">Testing Requirements: 2.1, 2.2, 3.1, 3.2, 4.1, 4.2, 5.1, 5.2</p>
+
+    <div class="controls">
+      <button id="runAllBtn">Run All Tests</button>
+      <button id="runImagesBtn">Test Images Only</button>
+      <button id="runVideosBtn">Test Videos Only</button>
+      <button id="runPapersBtn">Test Papers Only</button>
+      <button id="runSearchBtn">Test Search Only</button>
+      <button id="runErrorBtn">Test Error Handling</button>
+      <button id="clearBtn">Clear Results</button>
+    </div>
+
+    <div class="test-results" id="testResults"></div>
+
+    <div class="summary" id="summary" style="display: none;">
+      <h2>Test Summary</h2>
+      <div class="summary-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalTests">0</div>
+          <div class="stat-label">Total Tests</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #66bb6a;" id="passedTests">0</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #ef5350;" id="failedTests">0</div>
+          <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #64b5f6;" id="successRate">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { fetchImages, fetchVideos, fetchScholarPapers, fetchSearchResults } from './api-service.js';
+
+    // Test configuration
+    const TESTS = {
+      images: [
+        { keyword: "Perseid meteor shower", expected: 3 },
+        { keyword: "iron meteorite cross-section", expected: 3 },
+        { keyword: "Barringer crater Arizona", expected: 3 }
+      ],
+      videos: [
+        { keyword: "Chelyabinsk meteor dashcam", expected: 2 },
+        { keyword: "meteor shower time lapse", expected: 2 }
+      ],
+      papers: [
+        { keyword: "meteorite composition analysis", expected: 2 },
+        { keyword: "near-Earth asteroid detection", expected: 2 }
+      ],
+      search: [
+        { keyword: "Geminid meteor shower 2024", expected: 3 },
+        { keyword: "recent meteor sightings", expected: 3 },
+        { keyword: "meteorite museums", expected: 3 }
+      ]
+    };
+
+    let testResults = [];
+
+    /**
+     * Create test item HTML
+     */
+    function createTestItem(testId, keyword, type) {
+      return `
+        <div class="test-item" id="test-${testId}">
+          <div class="test-header">
+            <div class="test-title">Test ${testId}: ${type.toUpperCase()} Search</div>
+            <div class="test-status status-pending">PENDING</div>
+          </div>
+          <div class="test-keyword">Keyword: "${keyword}"</div>
+          <div class="test-details" id="details-${testId}"></div>
+        </div>
+      `;
+    }
+
+    /**
+     * Update test status
+     */
+    function updateTestStatus(testId, status, details = '') {
+      const testItem = document.getElementById(`test-${testId}`);
+      const statusEl = testItem.querySelector('.test-status');
+      const detailsEl = document.getElementById(`details-${testId}`);
+      
+      testItem.className = `test-item ${status}`;
+      statusEl.className = `test-status status-${status}`;
+      statusEl.textContent = status.toUpperCase();
+      
+      if (details) {
+        detailsEl.innerHTML = details;
+      }
+    }
+
+    /**
+     * Format image results
+     */
+    function formatImageResults(images) {
+      if (!images || images.length === 0) return '<div class="error-message">No images returned</div>';
+      
+      let html = `<div class="success-message">✓ Retrieved ${images.length} image(s)</div>`;
+      images.forEach((img, index) => {
+        html += `
+          <div class="result-item">
+            <div class="result-title">Image ${index + 1}: ${img.title}</div>
+            <div class="result-meta">URL: <a href="${img.url}" target="_blank" rel="noopener noreferrer">${img.url.substring(0, 60)}...</a></div>
+            ${img.thumbnail ? `<img src="${img.thumbnail}" alt="${img.title}" />` : ''}
+          </div>
+        `;
+      });
+      return html;
+    }
+
+    /**
+     * Format video results
+     */
+    function formatVideoResults(videos) {
+      if (!videos || videos.length === 0) return '<div class="error-message">No videos returned</div>';
+      
+      let html = `<div class="success-message">✓ Retrieved ${videos.length} video(s)</div>`;
+      videos.forEach((video, index) => {
+        html += `
+          <div class="result-item">
+            <div class="result-title">Video ${index + 1}: ${video.title}</div>
+            <div class="result-meta">Platform: ${video.platform}</div>
+            <div class="result-meta">URL: <a href="${video.url}" target="_blank" rel="noopener noreferrer">${video.url}</a></div>
+            ${video.thumbnail ? `<img src="${video.thumbnail}" alt="${video.title}" />` : ''}
+          </div>
+        `;
+      });
+      return html;
+    }
+
+    /**
+     * Format paper results
+     */
+    function formatPaperResults(papers) {
+      if (!papers || papers.length === 0) return '<div class="error-message">No papers returned</div>';
+      
+      let html = `<div class="success-message">✓ Retrieved ${papers.length} paper(s)</div>`;
+      papers.forEach((paper, index) => {
+        const authors = Array.isArray(paper.authors) ? paper.authors.join(', ') : 'Unknown';
+        html += `
+          <div class="result-item">
+            <div class="result-title">Paper ${index + 1}: ${paper.title}</div>
+            <div class="result-meta">Authors: ${authors}</div>
+            <div class="result-meta">Link: <a href="${paper.link}" target="_blank" rel="noopener noreferrer">${paper.link}</a></div>
+            ${paper.snippet ? `<div class="result-meta">Snippet: ${paper.snippet.substring(0, 150)}...</div>` : ''}
+          </div>
+        `;
+      });
+      return html;
+    }
+
+    /**
+     * Format search results
+     */
+    function formatSearchResults(results) {
+      if (!results || results.length === 0) return '<div class="error-message">No search results returned</div>';
+      
+      let html = `<div class="success-message">✓ Retrieved ${results.length} result(s)</div>`;
+      results.forEach((result, index) => {
+        html += `
+          <div class="result-item">
+            <div class="result-title">Result ${index + 1}: ${result.title}</div>
+            <div class="result-meta">Link: <a href="${result.link}" target="_blank" rel="noopener noreferrer">${result.link}</a></div>
+            ${result.snippet ? `<div class="result-meta">Snippet: ${result.snippet}</div>` : ''}
+          </div>
+        `;
+      });
+      return html;
+    }
+
+    /**
+     * Run image search test
+     */
+    async function testImageSearch(testId, keyword, expectedCount) {
+      updateTestStatus(testId, 'running', '<div>⏳ Fetching images from SerpAPI...</div>');
+      
+      try {
+        const startTime = Date.now();
+        const images = await fetchImages(keyword, expectedCount);
+        const duration = Date.now() - startTime;
+        
+        let detailsHTML = `<div>✓ Response received in ${duration}ms</div>`;
+        
+        // Validate results
+        if (images && images.length > 0) {
+          detailsHTML += formatImageResults(images);
+          
+          // Check if we got the expected count
+          if (images.length === expectedCount) {
+            detailsHTML += `<div class="success-message">✓ Retrieved expected count: ${expectedCount}</div>`;
+          } else {
+            detailsHTML += `<div style="color: #ffaa00;">⚠ Expected ${expectedCount}, got ${images.length}</div>`;
+          }
+          
+          // Validate structure
+          const hasValidStructure = images.every(img => 
+            img.url && img.title && typeof img.url === 'string' && typeof img.title === 'string'
+          );
+          
+          if (hasValidStructure) {
+            detailsHTML += '<div class="success-message">✓ All images have valid structure (url, title, thumbnail)</div>';
+            updateTestStatus(testId, 'passed', detailsHTML);
+            return { success: true, duration, count: images.length };
+          } else {
+            detailsHTML += '<div class="error-message">✗ Some images have invalid structure</div>';
+            updateTestStatus(testId, 'failed', detailsHTML);
+            return { success: false, duration, error: 'Invalid structure' };
+          }
+        } else {
+          detailsHTML += '<div class="error-message">✗ No images returned</div>';
+          updateTestStatus(testId, 'failed', detailsHTML);
+          return { success: false, duration, error: 'No results' };
+        }
+        
+      } catch (error) {
+        const errorHTML = `<div class="error-message">❌ ${error.message}</div>`;
+        updateTestStatus(testId, 'failed', errorHTML);
+        return { success: false, error: error.message };
+      }
+    }
+
+    /**
+     * Run video search test
+     */
+    async function testVideoSearch(testId, keyword, expectedCount) {
+      updateTestStatus(testId, 'running', '<div>⏳ Fetching videos from SerpAPI...</div>');
+      
+      try {
+        const startTime = Date.now();
+        const videos = await fetchVideos(keyword, expectedCount);
+        const duration = Date.now() - startTime;
+        
+        let detailsHTML = `<div>✓ Response received in ${duration}ms</div>`;
+        
+        // Validate results
+        if (videos && videos.length > 0) {
+          detailsHTML += formatVideoResults(videos);
+          
+          // Validate YouTube links
+          const allYouTubeLinks = videos.every(v => 
+            v.url && (v.url.includes('youtube.com') || v.url.includes('youtu.be'))
+          );
+          
+          if (allYouTubeLinks) {
+            detailsHTML += '<div class="success-message">✓ All video links are valid YouTube URLs</div>';
+          } else {
+            detailsHTML += '<div style="color: #ffaa00;">⚠ Some video links may not be YouTube URLs</div>';
+          }
+          
+          // Validate structure
+          const hasValidStructure = videos.every(v => 
+            v.url && v.title && v.platform && typeof v.url === 'string'
+          );
+          
+          if (hasValidStructure) {
+            detailsHTML += '<div class="success-message">✓ All videos have valid structure (url, title, thumbnail, platform)</div>';
+            updateTestStatus(testId, 'passed', detailsHTML);
+            return { success: true, duration, count: videos.length };
+          } else {
+            detailsHTML += '<div class="error-message">✗ Some videos have invalid structure</div>';
+            updateTestStatus(testId, 'failed', detailsHTML);
+            return { success: false, duration, error: 'Invalid structure' };
+          }
+        } else {
+          detailsHTML += '<div class="error-message">✗ No videos returned</div>';
+          updateTestStatus(testId, 'failed', detailsHTML);
+          return { success: false, duration, error: 'No results' };
+        }
+        
+      } catch (error) {
+        const errorHTML = `<div class="error-message">❌ ${error.message}</div>`;
+        updateTestStatus(testId, 'failed', errorHTML);
+        return { success: false, error: error.message };
+      }
+    }
+
+    /**
+     * Run scholar search test
+     */
+    async function testScholarSearch(testId, keyword, expectedCount) {
+      updateTestStatus(testId, 'running', '<div>⏳ Fetching papers from SerpAPI...</div>');
+      
+      try {
+        const startTime = Date.now();
+        const papers = await fetchScholarPapers(keyword, expectedCount);
+        const duration = Date.now() - startTime;
+        
+        let detailsHTML = `<div>✓ Response received in ${duration}ms</div>`;
+        
+        // Validate results
+        if (papers && papers.length > 0) {
+          detailsHTML += formatPaperResults(papers);
+          
+          // Validate citation formatting
+          const hasValidCitations = papers.every(p => 
+            p.title && p.link && typeof p.title === 'string' && typeof p.link === 'string'
+          );
+          
+          if (hasValidCitations) {
+            detailsHTML += '<div class="success-message">✓ All papers have valid citation formatting (title, authors, link, snippet)</div>';
+            updateTestStatus(testId, 'passed', detailsHTML);
+            return { success: true, duration, count: papers.length };
+          } else {
+            detailsHTML += '<div class="error-message">✗ Some papers have invalid citation formatting</div>';
+            updateTestStatus(testId, 'failed', detailsHTML);
+            return { success: false, duration, error: 'Invalid formatting' };
+          }
+        } else {
+          detailsHTML += '<div class="error-message">✗ No papers returned</div>';
+          updateTestStatus(testId, 'failed', detailsHTML);
+          return { success: false, duration, error: 'No results' };
+        }
+        
+      } catch (error) {
+        const errorHTML = `<div class="error-message">❌ ${error.message}</div>`;
+        updateTestStatus(testId, 'failed', errorHTML);
+        return { success: false, error: error.message };
+      }
+    }
+
+    /**
+     * Run web search test
+     */
+    async function testWebSearch(testId, keyword, expectedCount) {
+      updateTestStatus(testId, 'running', '<div>⏳ Fetching search results from SerpAPI...</div>');
+      
+      try {
+        const startTime = Date.now();
+        const results = await fetchSearchResults(keyword, expectedCount);
+        const duration = Date.now() - startTime;
+        
+        let detailsHTML = `<div>✓ Response received in ${duration}ms</div>`;
+        
+        // Validate results
+        if (results && results.length > 0) {
+          detailsHTML += formatSearchResults(results);
+          
+          // Validate result links
+          const hasValidLinks = results.every(r => 
+            r.link && r.link.startsWith('http') && typeof r.link === 'string'
+          );
+          
+          if (hasValidLinks) {
+            detailsHTML += '<div class="success-message">✓ All search results have valid links</div>';
+          } else {
+            detailsHTML += '<div class="error-message">✗ Some search results have invalid links</div>';
+          }
+          
+          // Validate structure
+          const hasValidStructure = results.every(r => 
+            r.title && r.link && typeof r.title === 'string'
+          );
+          
+          if (hasValidStructure) {
+            detailsHTML += '<div class="success-message">✓ All results have valid structure (title, link, snippet)</div>';
+            updateTestStatus(testId, 'passed', detailsHTML);
+            return { success: true, duration, count: results.length };
+          } else {
+            detailsHTML += '<div class="error-message">✗ Some results have invalid structure</div>';
+            updateTestStatus(testId, 'failed', detailsHTML);
+            return { success: false, duration, error: 'Invalid structure' };
+          }
+        } else {
+          detailsHTML += '<div class="error-message">✗ No search results returned</div>';
+          updateTestStatus(testId, 'failed', detailsHTML);
+          return { success: false, duration, error: 'No results' };
+        }
+        
+      } catch (error) {
+        const errorHTML = `<div class="error-message">❌ ${error.message}</div>`;
+        updateTestStatus(testId, 'failed', errorHTML);
+        return { success: false, error: error.message };
+      }
+    }
+
+    /**
+     * Test error handling
+     */
+    async function testErrorHandling() {
+      const resultsContainer = document.getElementById('testResults');
+      resultsContainer.innerHTML = '';
+      
+      const testId = 1;
+      resultsContainer.innerHTML = createTestItem(testId, 'invalid-api-test', 'error-handling');
+      
+      updateTestStatus(testId, 'running', '<div>⏳ Testing error handling with invalid keyword...</div>');
+      
+      try {
+        // Test with empty keyword
+        const images = await fetchImages('', 3);
+        
+        let detailsHTML = '<div class="success-message">✓ Error handling test completed</div>';
+        detailsHTML += '<div>Empty keyword returned: ' + (images.length === 0 ? 'empty array (correct)' : images.length + ' results') + '</div>';
+        
+        // The API should gracefully return empty array on error
+        if (Array.isArray(images)) {
+          detailsHTML += '<div class="success-message">✓ Function returns array on error (graceful degradation)</div>';
+          updateTestStatus(testId, 'passed', detailsHTML);
+          return { success: true };
+        } else {
+          detailsHTML += '<div class="error-message">✗ Function did not return array on error</div>';
+          updateTestStatus(testId, 'failed', detailsHTML);
+          return { success: false };
+        }
+        
+      } catch (error) {
+        // Should not throw, should return empty array
+        const errorHTML = `<div class="error-message">✗ Function threw error instead of returning empty array: ${error.message}</div>`;
+        updateTestStatus(testId, 'failed', errorHTML);
+        return { success: false, error: error.message };
+      }
+    }
+
+    /**
+     * Run all tests
+     */
+    async function runAllTests(testType = 'all') {
+      const resultsContainer = document.getElementById('testResults');
+      resultsContainer.innerHTML = '';
+      testResults = [];
+      
+      const testsToRun = [];
+      let testId = 1;
+      
+      if (testType === 'all' || testType === 'images') {
+        TESTS.images.forEach(test => {
+          testsToRun.push({ ...test, type: 'images', id: testId++, func: testImageSearch });
+        });
+      }
+      
+      if (testType === 'all' || testType === 'videos') {
+        TESTS.videos.forEach(test => {
+          testsToRun.push({ ...test, type: 'videos', id: testId++, func: testVideoSearch });
+        });
+      }
+      
+      if (testType === 'all' || testType === 'papers') {
+        TESTS.papers.forEach(test => {
+          testsToRun.push({ ...test, type: 'papers', id: testId++, func: testScholarSearch });
+        });
+      }
+      
+      if (testType === 'all' || testType === 'search') {
+        TESTS.search.forEach(test => {
+          testsToRun.push({ ...test, type: 'search', id: testId++, func: testWebSearch });
+        });
+      }
+      
+      // Create test items
+      testsToRun.forEach(test => {
+        resultsContainer.innerHTML += createTestItem(test.id, test.keyword, test.type);
+      });
+      
+      // Disable buttons during test run
+      document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+      
+      // Run tests sequentially with delay
+      for (const test of testsToRun) {
+        const result = await test.func(test.id, test.keyword, test.expected);
+        testResults.push({ ...test, ...result });
+        
+        // Wait 1 second between tests to avoid rate limiting
+        if (test.id < testsToRun.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      
+      // Re-enable buttons
+      document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+      
+      // Show summary
+      showSummary();
+    }
+
+    /**
+     * Show test summary
+     */
+    function showSummary() {
+      const summary = document.getElementById('summary');
+      const passed = testResults.filter(r => r.success).length;
+      const failed = testResults.filter(r => !r.success).length;
+      const total = testResults.length;
+      const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : 0;
+      
+      document.getElementById('totalTests').textContent = total;
+      document.getElementById('passedTests').textContent = passed;
+      document.getElementById('failedTests').textContent = failed;
+      document.getElementById('successRate').textContent = successRate + '%';
+      
+      summary.style.display = 'block';
+    }
+
+    /**
+     * Clear results
+     */
+    function clearResults() {
+      document.getElementById('testResults').innerHTML = '';
+      document.getElementById('summary').style.display = 'none';
+      testResults = [];
+    }
+
+    // Event listeners
+    document.getElementById('runAllBtn').addEventListener('click', () => runAllTests('all'));
+    document.getElementById('runImagesBtn').addEventListener('click', () => runAllTests('images'));
+    document.getElementById('runVideosBtn').addEventListener('click', () => runAllTests('videos'));
+    document.getElementById('runPapersBtn').addEventListener('click', () => runAllTests('papers'));
+    document.getElementById('runSearchBtn').addEventListener('click', () => runAllTests('search'));
+    document.getElementById('runErrorBtn').addEventListener('click', testErrorHandling);
+    document.getElementById('clearBtn').addEventListener('click', clearResults);
+  </script>
+</body>
+</html>
