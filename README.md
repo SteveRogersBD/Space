@@ -1,4 +1,4 @@
-# Antarikhs - Live Meteor & NEO Tracker
+# Ulkaa - Live Meteor & NEO Tracker
 
 A React + Three.js web application featuring an **interactive real-time 3D globe** for tracking meteors, fireballs, and near-Earth objects (NEOs) with live data from NASA, AMS, and GMN.
 
