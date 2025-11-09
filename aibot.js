@@ -149,8 +149,200 @@ const userMessagesStack = document.getElementById('userMessagesStack');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
+function createNewsCard(newsItem) {
+  const card = document.createElement('div');
+  card.className = 'news-card';
+  
+  const imageSection = document.createElement('div');
+  imageSection.className = 'news-image';
+  imageSection.style.backgroundImage = newsItem.urlToImage ? `url(${newsItem.urlToImage})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  
+  const contentSection = document.createElement('div');
+  contentSection.className = 'news-content';
+  
+  const title = document.createElement('h4');
+  title.textContent = newsItem.title;
+  
+  contentSection.appendChild(title);
+  card.appendChild(imageSection);
+  card.appendChild(contentSection);
+  
+  card.addEventListener('click', () => {
+    if (newsItem.url) window.open(newsItem.url, '_blank');
+  });
+  
+  return card;
+}
+
+function createPaperCard(paper) {
+  const card = document.createElement('div');
+  card.className = 'paper-card';
+  
+  const icon = document.createElement('div');
+  icon.className = 'paper-icon';
+  icon.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+  
+  const content = document.createElement('div');
+  content.className = 'paper-content';
+  
+  const title = document.createElement('h4');
+  title.textContent = paper.title;
+  
+  const summary = document.createElement('p');
+  summary.textContent = paper.abstract || paper.summary || 'No summary available';
+  
+  content.appendChild(title);
+  content.appendChild(summary);
+  card.appendChild(icon);
+  card.appendChild(content);
+  
+  card.addEventListener('click', () => {
+    if (paper.url) window.open(paper.url, '_blank');
+  });
+  
+  return card;
+}
+
+function openImageLightbox(imageUrl) {
+  // Create lightbox overlay
+  const lightbox = document.createElement('div');
+  lightbox.className = 'image-lightbox';
+  lightbox.innerHTML = `
+    <div class="lightbox-content">
+      <button class="lightbox-close">&times;</button>
+      <img src="${imageUrl}" alt="Full size image" class="lightbox-image">
+      <div class="lightbox-controls">
+        <a href="${imageUrl}" target="_blank" class="lightbox-open-new">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Open in New Tab
+        </a>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(lightbox);
+  
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+  
+  // Close handlers
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+  closeBtn.addEventListener('click', () => closeLightbox(lightbox));
+  
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+      closeLightbox(lightbox);
+    }
+  });
+  
+  // ESC key to close
+  const escHandler = (e) => {
+    if (e.key === 'Escape') {
+      closeLightbox(lightbox);
+      document.removeEventListener('keydown', escHandler);
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+  
+  // Animate in
+  setTimeout(() => lightbox.classList.add('active'), 10);
+}
+
+function closeLightbox(lightbox) {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+  setTimeout(() => lightbox.remove(), 300);
+}
+
+function createImageGallery(images) {
+  const gallery = document.createElement('div');
+  gallery.className = 'image-gallery';
+  
+  images.forEach(imageUrl => {
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = 'Search result';
+    img.className = 'gallery-image';
+    img.addEventListener('click', () => {
+      openImageLightbox(imageUrl);
+    });
+    gallery.appendChild(img);
+  });
+  
+  return gallery;
+}
+
 function updateThoughtBubble(content) {
-  bubbleText.textContent = content;
+  bubbleText.innerHTML = '';
+  
+  if (typeof content === 'string') {
+    bubbleText.textContent = content;
+  } else {
+    // Content is an object with text and optional media
+    const textDiv = document.createElement('div');
+    textDiv.className = 'bubble-text';
+    textDiv.textContent = content.text;
+    bubbleText.appendChild(textDiv);
+    
+    if (content.media) {
+      const mediaContainer = document.createElement('div');
+      mediaContainer.className = 'bubble-media-container';
+      
+      if (content.media.images && content.media.images.length > 0) {
+        const imagesSection = document.createElement('div');
+        imagesSection.className = 'media-section';
+        const gallery = createImageGallery(content.media.images);
+        imagesSection.appendChild(gallery);
+        mediaContainer.appendChild(imagesSection);
+      }
+      
+      if (content.media.news && content.media.news.length > 0) {
+        const newsSection = document.createElement('div');
+        newsSection.className = 'media-section';
+        const newsTitle = document.createElement('h3');
+        newsTitle.textContent = 'Related News';
+        newsTitle.className = 'section-title';
+        newsSection.appendChild(newsTitle);
+        
+        const newsGrid = document.createElement('div');
+        newsGrid.className = 'news-grid';
+        content.media.news.forEach(newsItem => {
+          newsGrid.appendChild(createNewsCard(newsItem));
+        });
+        newsSection.appendChild(newsGrid);
+        mediaContainer.appendChild(newsSection);
+      }
+      
+      if (content.media.papers && content.media.papers.length > 0) {
+        const papersSection = document.createElement('div');
+        papersSection.className = 'media-section';
+        const papersTitle = document.createElement('h3');
+        papersTitle.textContent = 'Research Papers';
+        papersTitle.className = 'section-title';
+        papersSection.appendChild(papersTitle);
+        
+        const papersGrid = document.createElement('div');
+        papersGrid.className = 'papers-grid';
+        content.media.papers.forEach(paper => {
+          papersGrid.appendChild(createPaperCard(paper));
+        });
+        papersSection.appendChild(papersGrid);
+        mediaContainer.appendChild(papersSection);
+      }
+      
+      bubbleText.appendChild(mediaContainer);
+    }
+  }
 }
 
 function addUserMessage(content) {
@@ -167,19 +359,80 @@ function addUserMessage(content) {
   userMessagesStack.appendChild(messageDiv);
 }
 
+async function fetchImages(keyword) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/images?search=${encodeURIComponent(keyword)}`);
+    if (!response.ok) throw new Error('Failed to fetch images');
+    return await response.json();
+  } catch (error) {
+    console.error('Image API Error:', error);
+    return [];
+  }
+}
+
+async function fetchNews(keyword) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/news?search=${encodeURIComponent(keyword)}`);
+    if (!response.ok) throw new Error('Failed to fetch news');
+    return await response.json();
+  } catch (error) {
+    console.error('News API Error:', error);
+    return [];
+  }
+}
+
+async function fetchPapers(keyword) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/papers?search=${encodeURIComponent(keyword)}`);
+    if (!response.ok) throw new Error('Failed to fetch papers');
+    return await response.json();
+  } catch (error) {
+    console.error('Papers API Error:', error);
+    return [];
+  }
+}
+
 async function getBotResponse(userMessage) {
   try {
-    const prompt = `You are Meteor, a friendly AI assistant specializing in meteors, asteroids, comets, and space phenomena. 
-Answer the following question in a conversational, engaging way. Keep responses concise (2-3 sentences max) and educational.
+    const prompt = `You are a helpful assistant named Meteor. You know everything about Meteors, meteoroids, asteroids, comets, and space phenomena, and you will be teaching the user about these topics while answering their questions.
+
+You have access to Google image API, scholar API, and news search API. When appropriate, provide search keywords for these resources to enhance your response.
+
+IMPORTANT: You must respond with VALID JSON only. Follow this exact format:
+{
+  "text": "Your actual response here",
+  "image": "image search keyword (optional, omit if not needed)",
+  "news": "news search keyword (optional, omit if not needed)",
+  "paper": "paper search keyword (optional, omit if not needed)"
+}
+
+Guidelines:
+- Keep your text response conversational, engaging, and educational
+- Only include image/news/paper keywords when they would genuinely enhance the answer
+- Use specific, relevant keywords for searches
+- Do not include fields if they're not needed for the question
 
 User question: ${userMessage}`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    return response.text();
+    const responseText = response.text();
+    
+    // Extract JSON from response (handle markdown code blocks)
+    let jsonText = responseText.trim();
+    if (jsonText.startsWith('```json')) {
+      jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    } else if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/```\n?/g, '').trim();
+    }
+    
+    const parsedResponse = JSON.parse(jsonText);
+    return parsedResponse;
   } catch (error) {
     console.error('Gemini API Error:', error);
-    return "I'm having trouble connecting to my knowledge base right now. Please try again in a moment!";
+    return {
+      text: "I'm having trouble connecting to my knowledge base right now. Please try again in a moment!"
+    };
   }
 }
 
@@ -195,7 +448,44 @@ async function sendMessage() {
     
     // Get AI response
     const response = await getBotResponse(message);
-    updateThoughtBubble(response);
+    
+    // Fetch additional media if keywords are provided
+    const mediaContent = {
+      text: response.text,
+      media: {}
+    };
+    
+    const fetchPromises = [];
+    
+    if (response.image) {
+      fetchPromises.push(
+        fetchImages(response.image).then(images => {
+          if (images.length > 0) mediaContent.media.images = images;
+        })
+      );
+    }
+    
+    if (response.news) {
+      fetchPromises.push(
+        fetchNews(response.news).then(news => {
+          if (news.length > 0) mediaContent.media.news = news;
+        })
+      );
+    }
+    
+    if (response.paper) {
+      fetchPromises.push(
+        fetchPapers(response.paper).then(papers => {
+          if (papers.length > 0) mediaContent.media.papers = papers;
+        })
+      );
+    }
+    
+    // Wait for all media to load
+    await Promise.all(fetchPromises);
+    
+    // Update bubble with text and media
+    updateThoughtBubble(mediaContent);
   }
 }
 
