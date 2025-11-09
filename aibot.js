@@ -139,43 +139,48 @@ window.addEventListener('resize', () => {
 });
 
 // Chat functionality
-const chatContainer = document.getElementById('chatContainer');
+const bubbleText = document.getElementById('bubbleText');
+const userMessagesStack = document.getElementById('userMessagesStack');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-function addMessage(content, isUser = false) {
+function updateThoughtBubble(content) {
+  bubbleText.textContent = content;
+}
+
+function addUserMessage(content) {
+  // Clear previous messages - only show latest
+  userMessagesStack.innerHTML = '';
+  
   const messageDiv = document.createElement('div');
-  messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+  messageDiv.className = 'user-message-bubble';
   
-  const contentDiv = document.createElement('div');
-  contentDiv.className = 'message-content';
-  contentDiv.textContent = content;
+  const textP = document.createElement('p');
+  textP.textContent = content;
   
-  messageDiv.appendChild(contentDiv);
-  chatContainer.appendChild(messageDiv);
-  
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  messageDiv.appendChild(textP);
+  userMessagesStack.appendChild(messageDiv);
 }
 
 function getBotResponse(userMessage) {
   const lowerMessage = userMessage.toLowerCase();
   
   if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-    return "Hello! I'm here to help you explore the wonders of space. What would you like to know?";
-  } else if (lowerMessage.includes('earth')) {
-    return "Earth is our home planet, the third from the Sun. It's the only known planet to harbor life and has a unique atmosphere that protects us from harmful radiation.";
-  } else if (lowerMessage.includes('moon')) {
-    return "The Moon is Earth's only natural satellite. It orbits our planet at an average distance of 384,400 km and influences our tides through its gravitational pull.";
-  } else if (lowerMessage.includes('space') || lowerMessage.includes('universe')) {
-    return "Space is vast and mysterious! The observable universe is about 93 billion light-years in diameter and contains billions of galaxies, each with billions of stars.";
-  } else if (lowerMessage.includes('star')) {
-    return "Stars are massive, luminous spheres of plasma held together by gravity. Our Sun is a medium-sized star that provides the energy necessary for life on Earth.";
-  } else if (lowerMessage.includes('planet')) {
-    return "There are 8 planets in our solar system: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. Each has unique characteristics and mysteries to explore!";
-  } else if (lowerMessage.includes('help')) {
-    return "I can answer questions about space, planets, stars, the moon, and the universe. Just ask me anything you're curious about!";
+    return "Hello! I'm Meteor, your guide to the fascinating world of meteors and space rocks. What would you like to know?";
+  } else if (lowerMessage.includes('meteor')) {
+    return "Meteors are space rocks that burn up in Earth's atmosphere, creating bright streaks of light we call 'shooting stars'. Most are smaller than a grain of sand!";
+  } else if (lowerMessage.includes('meteorite')) {
+    return "A meteorite is a meteor that survives its journey through the atmosphere and lands on Earth's surface. They're incredibly valuable for scientific research!";
+  } else if (lowerMessage.includes('asteroid')) {
+    return "Asteroids are rocky objects orbiting the Sun, mostly found in the asteroid belt between Mars and Jupiter. When they enter Earth's atmosphere, they become meteors!";
+  } else if (lowerMessage.includes('comet')) {
+    return "Comets are icy bodies that release gas and dust, forming beautiful tails when they approach the Sun. They're like cosmic snowballs!";
+  } else if (lowerMessage.includes('shower')) {
+    return "Meteor showers occur when Earth passes through debris left by comets. Famous ones include the Perseids in August and Geminids in December!";
+  } else if (lowerMessage.includes('help') || lowerMessage.includes('what')) {
+    return "I can tell you about meteors, meteorites, asteroids, comets, meteor showers, and how they impact Earth. What interests you most?";
   } else {
-    return "That's an interesting question! While I'm still learning, I'd love to help you explore more about space. Try asking about planets, stars, or the universe!";
+    return "That's an interesting question about space! I specialize in meteors and related phenomena. Try asking me about meteors, asteroids, or meteor showers!";
   }
 }
 
@@ -183,12 +188,12 @@ function sendMessage() {
   const message = userInput.value.trim();
   
   if (message) {
-    addMessage(message, true);
+    addUserMessage(message);
     userInput.value = '';
     
     setTimeout(() => {
       const response = getBotResponse(message);
-      addMessage(response, false);
+      updateThoughtBubble(response);
     }, 500);
   }
 }
@@ -197,6 +202,7 @@ sendBtn.addEventListener('click', sendMessage);
 
 userInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
+    e.preventDefault();
     sendMessage();
   }
 });

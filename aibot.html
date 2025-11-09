@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Bot - Antarikhs</title>
+  <title>Meteor - AI Bot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,45 +12,36 @@
 <body>
   <canvas id="canvas"></canvas>
   
-  <nav class="navbar">
-    <a href="index.html" class="back-btn">← Back to Home</a>
-  </nav>
 
-  <div class="container">
-    <div class="chat-header">
-      <div class="bot-avatar">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="currentColor"/>
-          <circle cx="12" cy="12" r="3" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="bot-info">
-        <h1>AI Space Assistant</h1>
-        <p class="status">Online</p>
+
+  <div class="robot-container" id="robotContainer">
+    <div class="thought-bubble" id="thoughtBubble">
+      <div class="bubble-tail"></div>
+      <div class="bubble-content">
+        <p id="bubbleText">Welcome! This is Meteor, your personal AI agent to help you discover the vivid world of meteors.</p>
       </div>
     </div>
+    <img src="/images/robot.png" alt="Meteor Robot" class="robot-character">
+  </div>
 
-    <div class="chat-container" id="chatContainer">
-      <div class="message bot-message">
-        <div class="message-content">
-          Hello! I'm your AI Space Assistant. How can I help you explore the cosmos today?
-        </div>
-      </div>
+  <div class="user-messages-container" id="userMessagesContainer">
+    <div class="user-messages-stack" id="userMessagesStack">
     </div>
+  </div>
 
-    <div class="input-container">
-      <input 
-        type="text" 
-        id="userInput" 
-        placeholder="Ask me anything about space..." 
-        autocomplete="off"
-      >
-      <button id="sendBtn" class="send-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="currentColor"/>
-        </svg>
-      </button>
-    </div>
+  <div class="input-bar-container">
+    <input 
+      type="text" 
+      id="userInput" 
+      class="input-bar" 
+      placeholder="Ask Meteor about meteors..." 
+      autocomplete="off"
+    >
+    <button id="sendBtn" class="send-btn-inline">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="currentColor"/>
+      </svg>
+    </button>
   </div>
 
   <script type="module" src="aibot.js"></script>
