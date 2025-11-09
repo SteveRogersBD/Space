@@ -63,7 +63,6 @@ export default function LiveTracking() {
         <ul className="nav-menu">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/live-tracking" aria-current="page">Live Tracking</Link></li>
-          <li><Link to="/projects">Projects</Link></li>
         </ul>
         <AuthButtons />
       </nav>

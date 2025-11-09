@@ -18,7 +18,7 @@ export default function MeteorStandalone() {
             Learn how small space rocks interact with Earth's atmosphere,<br />
             and why they matter for science and planetary defense.
           </p>
-          <button><a href="#">Explore</a></button>
+          <button><a href="/meteor-standalone/meteorite-types.html" target="_blank">Explore</a></button>
         </div>
         <img className="astronaut" src="/meteor-standalone/images/as2.png" title="astronaut by pngwing" alt="astronaut" />
       </main>
@@ -83,7 +83,6 @@ export default function MeteorStandalone() {
             <h5>Stony, Iron, Stony-Iron</h5>
             <p>Meteors come from rocky and metallic bodies. Meteorites recovered on Earth are classified mainly as stony, iron, or stony-iron.</p>
           </div>
-          <button className="button-card"><a href="#">See more</a></button>
         </div>
         <div className="card-menu">
           <img className="card-images" src="/meteor-standalone/images/starg.png" title="image by pngitem" alt="stars" />
@@ -92,7 +91,6 @@ export default function MeteorStandalone() {
             <h5>Perseids, Geminids, Leonids</h5>
             <p>Regular meteor showers occur when Earth crosses streams of debris left by comets or asteroids — predictable and great for observation.</p>
           </div>
-          <button className="button-card"><a href="#">See more</a></button>
         </div>
         <div className="card-menu">
           <img className="card-images" src="/meteor-standalone/images/moon.jpg" title="image by kindpng" alt="timeline" style={{ filter: 'brightness(80%) grayscale(50%)' }} />
@@ -101,7 +99,6 @@ export default function MeteorStandalone() {
             <h5>History and effects</h5>
             <p>Impacts range from tiny craters to events that can affect climate. Studying impacts provides insight into planetary history and risks.</p>
           </div>
-          <button className="button-card"><a href="#">See more</a></button>
         </div>
       </section>
 

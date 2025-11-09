@@ -8,7 +8,6 @@ export default function Insights() {
         <ul className="nav-menu">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/insights">Insights</Link></li>
-          <li><Link to="/projects">Projects</Link></li>
         </ul>
         <AuthButtons />
       </nav>

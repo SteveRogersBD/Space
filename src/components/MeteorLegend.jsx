@@ -35,8 +35,8 @@ export default function MeteorLegend() {
       </div>
       <style jsx>{`
         .meteor-legend {
-          position: fixed;
-          top: 20px;
+          position: absolute;
+          top: 20px; /* placed inside the LiveTracking section so this sits below the navbar */
           left: 20px;
           background: rgba(0, 0, 0, 0.85);
           backdrop-filter: blur(12px);

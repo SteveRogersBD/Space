@@ -31,13 +31,13 @@
             min-height: 60vh;
             background-position: center;
             background-size: cover;
-            padding: 3rem 1rem;
+            padding: 5rem 1rem 3rem 1rem;
             display: flex;
             align-items: center;
         }
 
-                /* Sticky header + glassmorphism nav */
-                header.site-header{ position: sticky; top: 0; z-index: 1000; padding: 0; margin: 0 0 1rem 0; background: transparent; }
+                /* Fixed floating header + glassmorphism nav */
+                header.site-header{ position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0; margin: 0; background: transparent; }
                 .glass-nav{
                     display:flex; align-items:center; gap:.75rem; width:100%;
                     max-width: 1200px; margin: .75rem auto 0 auto; padding: .6rem .9rem;
@@ -214,7 +214,6 @@
                         </a>
                         <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><i class="bi bi-list"></i></button>
                         <nav class="nav-links">
-                            <a href="index.html">Standalone Home</a>
                             <a class="active" href="meteorite-types.html">Meteorite Types</a>
                             <a href="../">Main Site</a>
                         </nav>

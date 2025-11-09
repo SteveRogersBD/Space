@@ -50,8 +50,7 @@ export default function AuthButtons() {
         disabled={launching}
         aria-label="Launch (Log in)"
       >
-        <span className="btn-icon" aria-hidden="true">🚀</span>
-        <span className="btn-text">Launch</span>
+Login
       </button>
 
       {/* Rocket element that animates on launch */}

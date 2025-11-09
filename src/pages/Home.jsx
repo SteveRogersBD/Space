@@ -63,21 +63,21 @@ export default function Home() {
           <li><Link to="/live-tracking">Live Tracking</Link></li>
           <li><Link to="/fun-zone">Fun Zone</Link></li>
           <li><Link to="/impact-simulator">Impact Simulator</Link></li>
-          <li><Link to="/info">Info</Link></li>
-          <li><Link to="/insights">Insights</Link></li>
-          <li><Link to="/astro-strike">Astro Strike</Link></li>
-          <li><Link to="/projects">Projects</Link></li>
+          <li><Link to="/info">Info-askAI</Link></li>
+          <li><Link to="/eyes-on-solar-system">Explore Solar System</Link></li>
         </ul>
         <AuthButtons />
       </nav>
 
-      {/* Sticky hero text that stays during the home section only */}
-      <div className="home-overlay">
-        <h1 className="title">ULKAA</h1>
-        <div className="subtitle-container">
-          <p className="subtitle">{subtitleText}</p>
+      {/* Hero section: floating text over globe, limited to first viewport */}
+      <section className="home-hero" aria-label="Home Hero">
+        <div className="home-overlay">
+          <h1 className="title">ULKAA</h1>
+          <div className="subtitle-container">
+            <p className="subtitle">{subtitleText}</p>
+          </div>
         </div>
-      </div>
+      </section>
 
 
       {/* Second section: integrated standalone content */}
@@ -87,19 +87,8 @@ export default function Home() {
 
       {/* Page-specific styles */}
       <style jsx>{`
-        .home-overlay {
-          position: sticky;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          pointer-events: none; /* allow globe/scroll interactions */
-          z-index: 10;
-        }
+        .home-hero { position: relative; width: 100%; height: 100vh; z-index: 10; pointer-events: none; }
+        .home-overlay { position: absolute; inset: 0; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none; }
 
         .meteor-standalone-section {
           position: relative;

@@ -1,5 +1,7 @@
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import SimpleAuthGate from './components/SimpleAuthGate';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Mission from './pages/Mission';
@@ -10,6 +12,7 @@ import Info from './pages/Info';
 import Insights from './pages/Insights';
 import AstroStrike from './pages/AstroStrike';
 import Projects from './pages/Projects';
+import EyesOnSolarSystem from './pages/EyesOnSolarSystem';
 import { withAuthenticationRequired } from '@auth0/auth0-react';
 
 function App() {
@@ -59,6 +62,50 @@ function App() {
     ),
   });
 
+  // Check Auth0 authentication status
+  const { isAuthenticated, isLoading: authLoading } = authDisabled 
+    ? { isAuthenticated: false, isLoading: false } 
+    : useAuth0();
+
+  // Show loading while Auth0 is checking authentication
+  if (authLoading) {
+    return (
+      <div className="auth0-login-container">
+        <div className="auth0-login-box">
+          <h2 className="auth0-login-title">Loading...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, show login gate
+  if (!isAuthenticated && !authDisabled) {
+    return <SimpleAuthGate onLogin={() => {}} />;
+  }
+
+  // For dev mode without Auth0, use simple localStorage check
+  const [siteAuth, setSiteAuth] = useState(() => {
+    if (!authDisabled) return true; // Auth0 handles authentication
+    try {
+      const v = localStorage.getItem('ulkAuth');
+      return v ? JSON.parse(v).loggedIn : false;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const handleSiteLogin = (user) => {
+    try {
+      localStorage.setItem('ulkAuth', JSON.stringify({ loggedIn: true, user }));
+    } catch (e) {}
+    setSiteAuth(true);
+  };
+
+  // Dev mode fallback login check
+  if (authDisabled && !siteAuth) {
+    return <SimpleAuthGate onLogin={handleSiteLogin} />;
+  }
+
   return (
     <Router>
       <Routes>
@@ -72,6 +119,7 @@ function App() {
         <Route path="/insights" element={<Insights />} />
         <Route path="/astro-strike" element={<AstroStrike />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/eyes-on-solar-system" element={<EyesOnSolarSystem />} />
       </Routes>
     </Router>
   );

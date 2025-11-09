@@ -14,32 +14,21 @@ if (!domain || !clientId) {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-if (domain && clientId) {
-  root.render(
-    <React.StrictMode>
-      <Auth0Provider
-        domain={domain}
-        clientId={clientId}
-        authorizationParams={{
-          redirect_uri: window.location.origin,
-          audience: audience,
-          scope: 'openid profile email offline_access',
-        }}
-        cacheLocation="localstorage"
-        useRefreshTokens={true}
-      >
-        <App />
-      </Auth0Provider>
-    </React.StrictMode>
-  );
-} else {
-  // mark to allow App to bypass Auth0 hooks in dev
-  window.__DISABLE_AUTH0 = true;
-  // Dev fallback: render app without Auth0 when env vars are not configured
-  root.render(
-    <React.StrictMode>
+root.render(
+  <React.StrictMode>
+    <Auth0Provider
+      domain={domain || 'genai-934194719980395.us.auth0.com'}
+      clientId={clientId || 'QkPk3LipxEsLje1C3RovBSLjEjZA7wzl'}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        audience: audience || 'https://api.spaceweb.org',
+        scope: 'openid profile email offline_access',
+      }}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
+    >
       <App />
-    </React.StrictMode>
-  );
-}
+    </Auth0Provider>
+  </React.StrictMode>
+);
 

@@ -12,7 +12,6 @@ export default function Mission() {
           <li><Link to="/">Home</Link></li>
           <li><Link to="/dashboard">Dashboard</Link></li>
           <li><Link to="/mission">Mission</Link></li>
-          <li><Link to="/projects">Projects</Link></li>
         </ul>
         <AuthButtons />
       </nav>

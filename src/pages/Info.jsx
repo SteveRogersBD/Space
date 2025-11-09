@@ -8,7 +8,6 @@ export default function Info() {
         <ul className="nav-menu">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/info">Info</Link></li>
-          <li><Link to="/projects">Projects</Link></li>
         </ul>
         <AuthButtons />
       </nav>
